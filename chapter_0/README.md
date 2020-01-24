@@ -25,7 +25,10 @@ This seems straight forward enough:
 
 * These IDEs have standard "debug" and "release" building options. I assume to save you the trouble of learning all those damn C++ compiler flags; `-O3` and all that jazz.
 
-* Let's just learn ISO C++, and not whatever libraries happen to be on my laptop at the moment:
+* Let's just learn ISO C++, and not "compiler extensions" happen to be on my laptop at the moment:
 
-> settings > Compilers > warnings > "treat as errors warnings that the code doesn't follow ISO C++"
+    settings >> Compilers >> warnings >> "treat as errors warnings that the code doesn't follow ISO C++"
 
+* I will be using C++17 as my standard:
+
+    settings >> Compilers >> `-std=c++17`
