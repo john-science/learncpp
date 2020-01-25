@@ -32,3 +32,5 @@ This seems straight forward enough:
 * learncpp.com uses C++17, but I seem to only have C++14, so I will use that:
 
     settings >> Compilers >> `-std=c++14`
+
+* Huh. I was able to compile and run the C++17 example in my C++14 IDE, just by manually typing in `-std=c++17`. Strange, but handy.
