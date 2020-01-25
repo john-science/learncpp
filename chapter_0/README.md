@@ -29,6 +29,6 @@ This seems straight forward enough:
 
     settings >> Compilers >> warnings >> "treat as errors warnings that the code doesn't follow ISO C++"
 
-* I will be using C++17 as my standard:
+* learncpp.com uses C++17, but I seem to only have C++14, so I will use that:
 
-    settings >> Compilers >> `-std=c++17`
+    settings >> Compilers >> `-std=c++14`
