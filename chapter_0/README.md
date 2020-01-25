@@ -25,7 +25,12 @@ This seems straight forward enough:
 
 * These IDEs have standard "debug" and "release" building options. I assume to save you the trouble of learning all those damn C++ compiler flags; `-O3` and all that jazz.
 
-* Let's just learn ISO C++, and not whatever libraries happen to be on my laptop at the moment:
+* Let's just learn ISO C++, and not "compiler extensions" happen to be on my laptop at the moment:
 
-> settings > Compilers > warnings > "treat as errors warnings that the code doesn't follow ISO C++"
+    settings >> Compilers >> warnings >> "treat as errors warnings that the code doesn't follow ISO C++"
 
+* learncpp.com uses C++17, but I seem to only have C++14, so I will use that:
+
+    settings >> Compilers >> `-std=c++14`
+
+* Huh. I was able to compile and run the C++17 example in my C++14 IDE, just by manually typing in `-std=c++17`. Strange, but handy.
