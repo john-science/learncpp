@@ -67,6 +67,22 @@ void update_particle(particle p, spatial direction, double velocity, double time
 }
 
 
+void update_universe(particle p1, particle p2, double time_delta) {
+    double distance{ distance_two_points(p1, p2) };
+    double gforce{ gravitational_force(p1.mass, p2.mass, distance) };
+    double v1{ velocity_from_force(gforce, time_delta, p1.mass) };
+    double v2{ velocity_from_force(gforce, time_delta, p2.mass) };
+    spatial direction1to2{ get_direction(p1, p2) };
+    spatial direction2to1;
+    direction2to1.x = -direction1to2.x;
+    direction2to1.y = -direction1to2.y;
+    direction2to1.z = -direction1to2.z;
+
+    update_particle(p1, direction2to1, v1, time_delta);
+    update_particle(p2, direction1to2, v2, time_delta);
+}
+
+
 int main()
 {
     particle earth;
