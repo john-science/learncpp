@@ -25,7 +25,6 @@ struct particle {
 };
 
 
-
 double graviational_force(double m1, double m2, double distance)
 {
     return G * m1 * m2 / (distance * distance);
