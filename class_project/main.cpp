@@ -20,24 +20,24 @@ struct spatial {
 struct particle {
   double mass{ 100.0 };  // kg
   double radius{ 1.0 };  // m
-  spatial position;   // m
-  spatial velocity;   // m/s
+  spatial position;      // m
+  spatial velocity;      // m/s
 };
 
 
-double graviational_force(double m1, double m2, double distance)
+double gravitational_force(double m1, double m2, double dist)
 {
-    return G * m1 * m2 / (distance * distance);
+    return G * m1 * m2 / (dist * dist);
 }
 
 
-double velocity_from_force(double force, double time_delta, double m)
+double velocity_from_force(double force, int time_delta, double m)
 {
     return (force * time_delta) / m;
 }
 
 
-double distance_two_points(particle p1, particle p2)
+double distance(particle p1, particle p2)
 {
     return sqrt(pow(p2.position.x - p1.position.x, 2) + pow(p2.position.y - p1.position.y, 2) + pow(p2.position.z - p1.position.z, 2));
 }
@@ -45,7 +45,7 @@ double distance_two_points(particle p1, particle p2)
 
 spatial get_direction(particle p1, particle p2)
 {
-    double dist { distance_two_points(p1, p2) };
+    double dist { distance(p1, p2) };
     spatial direction;
 
     direction.x = (p2.position.x - p1.position.x) / dist;
@@ -56,7 +56,7 @@ spatial get_direction(particle p1, particle p2)
 }
 
 
-void update_particle(particle p, spatial direction, double velocity, double time_delta) {
+void update_particle(particle &p, spatial direction, double velocity, int time_delta) {
     p.velocity.x += velocity * direction.x;
     p.velocity.y += velocity * direction.y;
     p.velocity.z += velocity * direction.z;
@@ -67,9 +67,9 @@ void update_particle(particle p, spatial direction, double velocity, double time
 }
 
 
-void update_universe(particle p1, particle p2, double time_delta) {
-    double distance{ distance_two_points(p1, p2) };
-    double gforce{ gravitational_force(p1.mass, p2.mass, distance) };
+void update_universe(particle &p1, particle &p2, int time_delta) {
+    double dist{ distance(p1, p2) };
+    double gforce{ gravitational_force(p1.mass, p2.mass, dist) };
     double v1{ velocity_from_force(gforce, time_delta, p1.mass) };
     double v2{ velocity_from_force(gforce, time_delta, p2.mass) };
     spatial direction1to2{ get_direction(p1, p2) };
@@ -83,19 +83,35 @@ void update_universe(particle p1, particle p2, double time_delta) {
 }
 
 
+// TODO: The particle objects are not being updated.
 int main()
 {
+    double dist{ 1 };
+    
+    // Init Earth
     particle earth;
     earth.mass = earth_mass;
     earth.radius = earth_radius;
 
+    // Init Satelite
     particle satelite;
-    satelite.mass = 1000;
-    satelite.radius = 5;
+    satelite.mass = earth_mass / 100;
+    satelite.radius = 335;
     satelite.position.x = 24e6;
     satelite.velocity.y = 15e6;
 
-    std::cout << "Distance from Earth to the satelite: " << distance_two_points(earth, satelite) - earth.radius - satelite.radius << "\n";
+    for (int t=0; t < 100000; t++) {
+        update_universe(earth, satelite, 60 * 60);
+        
+        dist = distance(earth, satelite);
+        if (dist <= (earth.radius + satelite.radius)){
+            std::cout << "BOOM! Collision at time " << t << "\n";
+            break;
+        } else if (t % 10000 == 0) {
+            std::cout << "The satellite is " << dist<< " meters from Earth at time " << t << ".\n";
+            std::cout << "\t" << satelite.position.x << ", " << satelite.position.y << ", " << satelite.position.z << " -- " << gravitational_force(earth.mass, satelite.mass, dist) << "\n";
+        }
+    }
 
     return 0;
 }
