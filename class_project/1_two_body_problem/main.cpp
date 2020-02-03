@@ -1,4 +1,9 @@
-// g++ main.cpp --std=c++17 -o stellar.exe
+/** g++ main.cpp --std=c++17 -o two_body_problem.exe
+ *
+ * This is the two-body problem in Newtownian physics.
+ * The example below is the Hubble Space Telescope (HST)
+ * orbiting the Earth.
+ */
 #include <iostream>
 #include <math.h>
 
@@ -103,7 +108,7 @@ int main()
     earth.mass = earth_mass;
     earth.radius = earth_radius;
 
-    // Init Satelite (Hubble)
+    // Init Satelite (HST)
     particle satelite;
     satelite.mass = 11110;
     satelite.radius = 8.2;
