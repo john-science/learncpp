@@ -50,14 +50,12 @@ double distance(particle p1, particle p2)
 
 spatial get_direction(particle p1, particle p2)
 {
-    double total{ 0.0 };
     spatial direction;
-
     direction.x = p2.position.x - p1.position.x;
     direction.y = p2.position.y - p1.position.y;
     direction.z = p2.position.z - p1.position.z;
 
-    total = abs(direction.x) + abs(direction.y) + abs(direction.z);
+    double total{ abs(direction.x) + abs(direction.y) + abs(direction.z) };
 
     direction.x /= total;
     direction.y /= total;
@@ -99,10 +97,6 @@ void update_universe(particle *p1, particle *p2, int time_delta)
 
 int main()
 {
-    double dist{ 1 };
-    int t{ 0 };
-    int dt{ 1 };
-
     // Init Earth
     particle earth;
     earth.mass = earth_mass;
@@ -114,6 +108,10 @@ int main()
     satelite.radius = 8.2;
     satelite.position.x = 6.9171e6;
     satelite.velocity.y = sqrt(G * earth_mass / satelite.position.x);  // based on stable orbit formula
+
+    double dist{ 1 };
+    int t{ 0 };
+    int dt{ 1 };
 
     while(t < 14 * 24 * 60 * 60) {
         update_universe(&earth, &satelite, dt);
