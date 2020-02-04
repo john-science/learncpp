@@ -1,0 +1,4 @@
+# depslib dependency file v1.0
+1580778692 source:/home/thejollysin/git/learncpp/chapter_2/multiple_files/multiple_files/main.cpp
+	<iostream>
+
