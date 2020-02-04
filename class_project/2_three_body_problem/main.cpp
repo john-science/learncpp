@@ -11,13 +11,18 @@
 const double pi{ 3.1415926535897932384626 };
 const double G{ 6.6743e-11 };               // m**3 / (kg * s)
 const double c{ 299792458 };                // m / s
-const double earth_mass{ 5.9722e24 };       // kg
-const double earth_radius{ 6378000.0 };     // m
-const double sun_mass{ 1.32712440018e20 };  // kg
 
+/* astronomical data */
+const double hubble_mass{ 11110 };          // kg
+const double hubble_radius{ 8.2 };          // m
+const double moon_mass{ 7.342e22 };         // kg
+const double moon_radius{ 1.7374e6 };       // m
+const double earth_mass{ 5.9722e24 };       // kg
+const double earth_radius{ 6.378e6 };       // m
+const double sun_mass{ 1.32712440018e20 };  // kg
+const double sun_radius{ 6.96342e8 };       // m
 
 /* scientifically meaningful data types */
-
 typedef struct spatial {
   double x { 0 };
   double y { 0 };
@@ -42,6 +47,9 @@ void update_universe(particle *p1, particle *p2, int time_delta);
 
 
 /* begin actual program */
+double lambda(double velocity) {
+    return 1.0 / sqrt(1.0 - ((velocity * velocity) / (c * c)));
+}
 
 
 double gravitational_force(double mass1, double mass2, double dist) {
