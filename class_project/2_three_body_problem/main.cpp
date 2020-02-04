@@ -19,7 +19,7 @@ const double moon_mass{ 7.342e22 };         // kg
 const double moon_radius{ 1.7374e6 };       // m
 const double earth_mass{ 5.9722e24 };       // kg
 const double earth_radius{ 6.378e6 };       // m
-const double sun_mass{ 1.32712440018e20 };  // kg
+const double sun_mass{ 1.9885e30 };         // kg
 const double sun_radius{ 6.96342e8 };       // m
 
 /* scientifically meaningful data types */
