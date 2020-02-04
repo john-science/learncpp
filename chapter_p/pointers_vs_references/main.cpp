@@ -1,10 +1,9 @@
-/** g++ main.cpp --std=c++17 -o pointers.exe
-  *
-  * Helpful video on the differences between references and pointers:
-  * https://www.youtube.com/watch?v=sxHng1iufQE
-  *
-  *
-  */
+/* g++ main.cpp --std=c++17 -o pointers.exe
+  
+Helpful video on the differences between references and pointers:
+https://www.youtube.com/watch?v=sxHng1iufQE
+  
+ */
 #include <iostream>
 
 
