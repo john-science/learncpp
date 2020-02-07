@@ -1,4 +1,7 @@
 # depslib dependency file v1.0
-1580778692 source:/home/thejollysin/git/learncpp/chapter_2/multiple_files/multiple_files/main.cpp
+1581072799 source:/home/thejollysin/git/learncpp/chapter_2/multiple_files/multiple_files/main.cpp
 	<iostream>
+	"add.h"
+
+1581072757 /home/thejollysin/git/learncpp/chapter_2/multiple_files/multiple_files/add.h
 
