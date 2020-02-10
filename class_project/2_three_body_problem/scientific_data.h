@@ -1,6 +1,6 @@
 
 #if !defined(SCIENTIFIC_DATA_H)
-#define SCIENTIFIC_DATA_H 1
+#define SCIENTIFIC_DATA_H
 
 /* scientific constants */
 const double pi{ 3.1415926535897932384626 };
