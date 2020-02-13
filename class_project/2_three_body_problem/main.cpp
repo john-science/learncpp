@@ -97,6 +97,7 @@ void update_universe(particle *p1, particle *p2, int time_delta) {
 }
 
 
+/* TODO: make an array of particle objects */
 int main() {
     // Init Earth
     particle earth;
