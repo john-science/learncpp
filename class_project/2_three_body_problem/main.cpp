@@ -81,7 +81,9 @@ void update_particle(particle *p, spatial direction, double velocity, int time_d
 
 
 void update_universe(particle *p1, particle *p2, int time_delta) {
+      /* TODO: This will have to use an NxN matrix to amortize the distance between each pair of particles. */
     double dist{ distance(*p1, *p2) };
+      /* TODO: This will have to use an NxN matrix to amortize the forces between each pair of particles. */
     double gforce{ gravitational_force(p1->mass, p2->mass, dist) };
     double v1{ velocity_from_force(gforce, time_delta, p1->mass) };
     double v2{ velocity_from_force(gforce, time_delta, p2->mass) };
@@ -97,7 +99,6 @@ void update_universe(particle *p1, particle *p2, int time_delta) {
 }
 
 
-/* TODO: make an array of particle objects */
 int main() {
     // Init Earth
     particle earth;
@@ -110,6 +111,9 @@ int main() {
     satelite.radius = 8.2;
     satelite.position.x = 6.9171e6;
     satelite.velocity.y = sqrt(G * earth_mass / satelite.position.x);  // based on stable orbit formula
+
+    /* TODO: instead, use an array of particle objects */
+    particle particles[] = {earth, satelite};
 
     double dist{ 1 };
     int t{ 0 };
@@ -125,7 +129,7 @@ int main() {
             std::cout << "\tearth: (" << earth.position.x << ", " << earth.position.y << ", " << earth.position.z << ")\n";
             break;
         } else if ((t % (12 * 60 * 60)) == 0) {
-            std::cout << "The satellite is  " << dist<< "  m from Earth at time " << (t / (24 * 60 * 60)) << ".\n";
+            std::cout << "The satelite is  " << dist<< "  m from Earth at time " << (t / (24 * 60 * 60)) << ".\n";
         }
 
         t += dt;
