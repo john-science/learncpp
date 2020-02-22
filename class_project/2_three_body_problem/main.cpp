@@ -21,6 +21,9 @@ typedef struct particle {
   double radius{ 1.0 };  // m
   spatial position;      // m
   spatial velocity;      // m/s
+  /* TODO: Some particles will be small, and we can skip calculating their graviational forces:
+  bool tiny{ false };
+  */
 } particle;
 
 /* forward declarations */
@@ -81,7 +84,9 @@ void update_particle(particle *p, spatial direction, double velocity, int time_d
 
 
 void update_universe(particle *p1, particle *p2, int time_delta) {
-      /* TODO: This will have to use an NxN matrix to amortize the distance between each pair of particles. */
+      /* TODO: This will have to use an NxN matrix to amortize the distance between each pair of particles.
+         double distances[num_particles][num_particles];
+      */
     double dist{ distance(*p1, *p2) };
       /* TODO: This will have to use an NxN matrix to amortize the forces between each pair of particles. */
     double gforce{ gravitational_force(p1->mass, p2->mass, dist) };
