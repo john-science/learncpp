@@ -105,6 +105,7 @@ int main() {
     earth.mass = earth_mass;
     earth.radius = earth_radius;
 
+    /* Low Earth Orbit is tricky (atmospherics) - Try Sun, Earth, Moon */
     // Init Satelite (HST)
     particle satelite;
     satelite.mass = 11110;
