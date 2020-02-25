@@ -56,6 +56,16 @@ double distance(particle p1, particle p2) {
 }
 
 
+void update_distances(double dist[][], particle particles[]) {
+    for (int i=0; i < 3; i++) {
+        for (int j=i + 1; j < 3; j++) {
+            dist[i][j] = distance(particles[i], particles[j]);
+            dist[j][i] = dist[i][j];
+        }
+    }
+}
+
+
 spatial get_direction(particle p1, particle p2) {
     spatial direction;
     direction.x = p2.position.x - p1.position.x;
@@ -83,13 +93,13 @@ void update_particle(particle *p, spatial direction, double velocity, int time_d
 }
 
 
-void update_universe(particle *p1, particle *p2, int time_delta) {
-      /* TODO: This will have to use an NxN matrix to amortize the distance between each pair of particles.
-         double distances[num_particles][num_particles];
-      */
-    double dist{ distance(*p1, *p2) };
-      /* TODO: This will have to use an NxN matrix to amortize the forces between each pair of particles. */
+void update_universe(particle particles[], double dist[], int time_delta) {
+    update_distances(dist, particles);
+    /* TODO: This will have to use an NxN matrix to amortize the forces between each pair of particles.
+    update_forces(forces, particles);
+    */
     double gforce{ gravitational_force(p1->mass, p2->mass, dist) };
+
     double v1{ velocity_from_force(gforce, time_delta, p1->mass) };
     double v2{ velocity_from_force(gforce, time_delta, p2->mass) };
 
@@ -105,36 +115,40 @@ void update_universe(particle *p1, particle *p2, int time_delta) {
 
 
 int main() {
+    std::cout << "BOOM!\n\nThis is broken!\n\nWork in progress!\n\nDon't expect this to work YET!\n";
+
+    // Init Sun
+    particle sun;
+    sun.mass = sun_mass;
+    sun.radius = sun_radius;
+
     // Init Earth
     particle earth;
     earth.mass = earth_mass;
     earth.radius = earth_radius;
+    earth.position.x = 1.495978707e11;
+    satelite.velocity.y = sqrt(G * sun_mass / earth.position.x);  // based on stable orbit formula
 
-    /* Low Earth Orbit is tricky (atmospherics) - Try Sun, Earth, Moon */
-    // Init Satelite (HST)
-    particle satelite;
-    satelite.mass = 11110;
-    satelite.radius = 8.2;
-    satelite.position.x = 6.9171e6;
-    satelite.velocity.y = sqrt(G * earth_mass / satelite.position.x);  // based on stable orbit formula
+    // Init Moon
+    particle moon;
+    moon.mass = moon_mass;
+    moon.radius = moon_radius;
+    moon.position.x = earth.position.x + 3.850006e8;
+    moon.velocity.y = sqrt(G * earth_mass / moon.position.x);  // based on stable orbit formula
 
-    /* TODO: instead, use an array of particle objects */
-    particle particles[] = {earth, satelite};
+    /* init the array of particless */
+    particle particles[3] = {sun, earth, moon};
 
-    double dist{ 1 };
+    double dist[3][3] = {0};
+
     int t{ 0 };
-    int dt{ 1 };
+    int dt{ 60 * 60 };
 
-    while(t < 14 * 24 * 60 * 60) {
-        update_universe(&earth, &satelite, dt);
+    while(t < 30 * 24 * 60 * 60) {
+        update_universe(particles, dist, dt);
 
         dist = distance(earth, satelite);
-        if (std::abs(dist) <= (earth.radius + satelite.radius)) {
-            std::cout << "BOOM! Collision at time " << t << "\n";
-            std::cout << "\tsatelite: (" << satelite.position.x << ", " << satelite.position.y << ", " << satelite.position.z << ")\n";
-            std::cout << "\tearth: (" << earth.position.x << ", " << earth.position.y << ", " << earth.position.z << ")\n";
-            break;
-        } else if ((t % (12 * 60 * 60)) == 0) {
+        if ((t % (12 * 60 * 60)) == 0) {
             std::cout << "The satelite is  " << dist<< "  m from Earth at time " << (t / (24 * 60 * 60)) << ".\n";
         }
 
