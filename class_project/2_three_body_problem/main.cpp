@@ -33,6 +33,7 @@ double distance(particle p1, particle p2);
 spatial get_direction(particle p1, particle p2);
 void update_particle(particle *p, spatial direction, double velocity, int time_delta);
 void update_universe(particle *p1, particle *p2, int time_delta);
+void update_distances(double dist[3][3], particle particles[3]);
 
 
 /* begin actual program */
@@ -56,7 +57,7 @@ double distance(particle p1, particle p2) {
 }
 
 
-void update_distances(double dist[][], particle particles[]) {
+void update_distances(double dist[3][3], particle particles[3]) {
     for (int i=0; i < 3; i++) {
         for (int j=i + 1; j < 3; j++) {
             dist[i][j] = distance(particles[i], particles[j]);
