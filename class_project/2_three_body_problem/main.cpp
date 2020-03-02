@@ -67,6 +67,20 @@ void update_distances(double dist[3][3], particle particles[3]) {
 }
 
 
+double dist[3][3] update_gravity(particle particles[3], double dist[3][3]) {
+    double gravity[3][3] = {0};
+
+    for (int i=0; i < 3; i++) {
+        for (int j=i + 1; j < 3; j++) {
+            gravity[i][j] = gravitational_force(particles[i].mass, particles[j].mass, dist[i][j]);
+            gravity[j][i] = gravity[i][j];
+        }
+    }
+
+    return gravity;
+}
+
+
 spatial get_direction(particle p1, particle p2) {
     spatial direction;
     direction.x = p2.position.x - p1.position.x;
@@ -94,16 +108,15 @@ void update_particle(particle *p, spatial direction, double velocity, int time_d
 }
 
 
-void update_universe(particle particles[], double dist[], int time_delta) {
+void update_universe(particle particles[3], double dist[3], int time_delta) {
     update_distances(dist, particles);
-    /* TODO: This will have to use an NxN matrix to amortize the forces between each pair of particles.
-    update_forces(forces, particles);
-    */
-    double gforce{ gravitational_force(p1->mass, p2->mass, dist) };
+    double gforce{ update_gravity(particles, dist) };
 
+    // TODO: There will need to be an array (size 3) of particles
     double v1{ velocity_from_force(gforce, time_delta, p1->mass) };
     double v2{ velocity_from_force(gforce, time_delta, p2->mass) };
 
+    // TODO: This logic needs to be in a loop
     spatial direction1to2{ get_direction(*p1, *p2) };
     spatial direction2to1;
     direction2to1.x = -direction1to2.x;
