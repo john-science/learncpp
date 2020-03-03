@@ -111,6 +111,12 @@ void update_particle(particle *p, spatial direction, double velocity, int time_d
 void update_universe(particle particles[3], double dist[3], int time_delta) {
     update_distances(dist, particles);
     double gforce{ update_gravity(particles, dist) };
+  
+    // 1) calc 2D array of directions
+  
+    // 2) calc 2D array of directional forces
+  
+    // 3) calc 2D array of directional velocities
 
     // TODO: There will need to be an array (size 3) of particles
     double v1{ velocity_from_force(gforce, time_delta, p1->mass) };
@@ -123,6 +129,7 @@ void update_universe(particle particles[3], double dist[3], int time_delta) {
     direction2to1.y = -direction1to2.y;
     direction2to1.z = -direction1to2.z;
 
+    // 4) update all particles with directional velocities
     update_particle(p1, direction1to2, v1, time_delta);
     update_particle(p2, direction2to1, v2, time_delta);
 }
