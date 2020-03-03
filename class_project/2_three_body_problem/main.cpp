@@ -1,8 +1,7 @@
 /** g++ main.cpp --std=c++17 -o three_body_problem.exe
  *
  * This is the three-body problem in Newtownian physics.
- * The example below is the Hubble Space Telescope (HST)
- * orbiting the Earth...
+ * The example below is the Sun, Earth, and Earth's Moon.
  */
 #include <iostream>
 #include <math.h>
