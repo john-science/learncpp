@@ -108,27 +108,30 @@ void update_particle(particle *p, spatial direction, double velocity, int time_d
 
 
 void update_universe(particle particles[3], double dist[3], int time_delta) {
+    // 0) calc 2D array of distances between particle pairs
     update_distances(dist, particles);
+  
+    // 1) calc 2D array of gravitational force between particle pairs
     double gforce{ update_gravity(particles, dist) };
   
-    // 1) calc 2D array of directions
+    // 2) calc 2D array of directions
   
-    // 2) calc 2D array of directional forces
+    // 3) calc 1D array of net directional forces
   
-    // 3) calc 2D array of directional velocities
+    // 4) calc 1D array of net directional velocities
 
-    // TODO: There will need to be an array (size 3) of particles
+    // OLD: There will need to be an array (size 3) of particles
     double v1{ velocity_from_force(gforce, time_delta, p1->mass) };
     double v2{ velocity_from_force(gforce, time_delta, p2->mass) };
 
-    // TODO: This logic needs to be in a loop
+    // OLD: This logic needs to be in a loop
     spatial direction1to2{ get_direction(*p1, *p2) };
     spatial direction2to1;
     direction2to1.x = -direction1to2.x;
     direction2to1.y = -direction1to2.y;
     direction2to1.z = -direction1to2.z;
 
-    // 4) update all particles with directional velocities
+    // 5) update all particles with directional velocities
     update_particle(p1, direction1to2, v1, time_delta);
     update_particle(p2, direction2to1, v2, time_delta);
 }
