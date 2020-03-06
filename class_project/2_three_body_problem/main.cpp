@@ -27,6 +27,7 @@ typedef struct particle {
 
 /* forward declarations */
 double gravitational_force(double mass1, double mass2, double dist);
+spatial gravitational_force(particle p1, particle p2, double dist);
 double velocity_from_force(double force, int time_delta, double mass);
 double distance(particle p1, particle p2);
 spatial get_direction(particle p1, particle p2);
@@ -38,6 +39,18 @@ void update_distances(double dist[3][3], particle particles[3]);
 /* begin actual program */
 double lambda(double velocity) {
     return 1.0 / sqrt(1.0 - ((velocity * velocity) / (c * c)));
+}
+
+
+spatial gravitational_force(particle p1, particle p2, double dist) {
+    spatial force {get_direction(p1, p2)};
+    double magnitude{gravitational_force(p1.mass, p2.mass, dist)};
+
+    force.x *= magnitude;
+    force.y *= magnitude;
+    force.z *= magnitude;
+
+    return force;
 }
 
 
@@ -66,12 +79,16 @@ void update_distances(double dist[3][3], particle particles[3]) {
 }
 
 
-double dist[3][3] update_gravity(particle particles[3], double dist[3][3]) {
-    double gravity[3][3] = {0};
+spatial[3][3] update_gravity(particle particles[3], double dist[3][3]) {
+    spatial gravity[3][3] = {0};
 
     for (int i=0; i < 3; i++) {
         for (int j=i + 1; j < 3; j++) {
             gravity[i][j] = gravitational_force(particles[i].mass, particles[j].mass, dist[i][j]);
+            spatial reverse_force;
+            reverse_force.x = -(gravity[i][j]).x;
+            reverse_force.y = -(gravity[i][j]).y;
+            reverse_force.z = -(gravity[i][j]).z;
             gravity[j][i] = gravity[i][j];
         }
     }
@@ -110,15 +127,13 @@ void update_particle(particle *p, spatial direction, double velocity, int time_d
 void update_universe(particle particles[3], double dist[3], int time_delta) {
     // 0) calc 2D array of distances between particle pairs
     update_distances(dist, particles);
-  
+
     // 1) calc 2D array of gravitational force between particle pairs
-    double gforce{ update_gravity(particles, dist) };
-  
-    // 2) calc 2D array of directions
-  
-    // 3) calc 1D array of net directional forces
-  
-    // 4) calc 1D array of net directional velocities
+    double[3][3] gforce{ update_gravity(particles, dist) };
+
+    // 2) calc 1D array of net directional forces
+
+    // 3) calc 1D array of net directional velocities
 
     // OLD: There will need to be an array (size 3) of particles
     double v1{ velocity_from_force(gforce, time_delta, p1->mass) };
@@ -131,7 +146,7 @@ void update_universe(particle particles[3], double dist[3], int time_delta) {
     direction2to1.y = -direction1to2.y;
     direction2to1.z = -direction1to2.z;
 
-    // 5) update all particles with directional velocities
+    // 4) update all particles with directional velocities
     update_particle(p1, direction1to2, v1, time_delta);
     update_particle(p2, direction2to1, v2, time_delta);
 }
