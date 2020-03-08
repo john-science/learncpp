@@ -64,6 +64,28 @@ double velocity_from_force(double force, int time_delta, double mass) {
 }
 
 
+spatial velocity_from_3d_force(spatial force, int time_delta, double mass) {
+    spatial velocity;
+
+    velocity.x = velocity_from_force(force.x, time_delta, mass);
+    velocity.y = velocity_from_force(force.y, time_delta, mass);
+    velocity.z = velocity_from_force(force.z, time_delta, mass);
+
+    return velocity;
+}
+
+
+spatial[3] calc_net_velocities(spatial[3] gforce, int time_delta, particle[3] particles) {
+    spatial[3] velocities;
+
+    for (int i=0; i < 3; i++) {
+        spatial velocity{ velocity_from_force(gforce[i], time_delta, particles[i]->mass) };
+    }
+
+    return velocities;
+}
+
+
 double distance(particle p1, particle p2) {
     return sqrt(pow(p2.position.x - p1.position.x, 2) + pow(p2.position.y - p1.position.y, 2) + pow(p2.position.z - p1.position.z, 2));
 }
@@ -97,6 +119,17 @@ spatial[3][3] update_gravity(particle particles[3], double dist[3][3]) {
 }
 
 
+spatial[3] sum_gravity(spatial[3][3] gforce) {
+    spatial tot[3];
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            tot[i].x += gforce[i][j].x;
+            tot[i].y += gforce[i][j].y;
+            tot[i].z += gforce[i][j].z;
+        }
+    }
+}
+
 spatial get_direction(particle p1, particle p2) {
     spatial direction;
     direction.x = p2.position.x - p1.position.x;
@@ -129,26 +162,16 @@ void update_universe(particle particles[3], double dist[3], int time_delta) {
     update_distances(dist, particles);
 
     // 1) calc 2D array of gravitational force between particle pairs
-    double[3][3] gforce{ update_gravity(particles, dist) };
+    spatial[3][3] gforce{ update_gravity(particles, dist) };
 
     // 2) calc 1D array of net directional forces
+    spatial[3] net_gforce{ sum_gravity(gforce) };
 
     // 3) calc 1D array of net directional velocities
-
-    // OLD: There will need to be an array (size 3) of particles
-    double v1{ velocity_from_force(gforce, time_delta, p1->mass) };
-    double v2{ velocity_from_force(gforce, time_delta, p2->mass) };
-
-    // OLD: This logic needs to be in a loop
-    spatial direction1to2{ get_direction(*p1, *p2) };
-    spatial direction2to1;
-    direction2to1.x = -direction1to2.x;
-    direction2to1.y = -direction1to2.y;
-    direction2to1.z = -direction1to2.z;
+    spatiel[3] velocities{ calc_net_velocities(net_gforce, time_delta, particles) };
 
     // 4) update all particles with directional velocities
-    update_particle(p1, direction1to2, v1, time_delta);
-    update_particle(p2, direction2to1, v2, time_delta);
+    update_particle(p1, velocities[0], time_delta);
 }
 
 
