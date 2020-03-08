@@ -26,15 +26,20 @@ typedef struct particle {
 } particle;
 
 /* forward declarations */
+spatial* calc_net_velocities(spatial gforce[3], int time_delta, particle particles[3]);
+double distance(particle p1, particle p2);
+spatial get_direction(particle p1, particle p2);
 double gravitational_force(double mass1, double mass2, double dist);
 spatial gravitational_force(particle p1, particle p2, double dist);
-double velocity_from_force(double force, int time_delta, double mass);
-double distance(particle p1, particle p2);
+double lambda(double velocity);
+spatial* sum_gravity(spatial gforce[3][3]);
 void update_distances(double dist[3][3], particle particles[3]);
-spatial get_direction(particle p1, particle p2);
-void update_particle(particle *p, spatial direction, double velocity, int time_delta);
+void update_gravity(spatial gforce[3], particle particles[3], double dist[3][3]);
+void update_particle(particle *p, spatial *velocity, int time_delta);
 void update_particles(particle particles[3], spatial velocities[3], double time_delta);
 void update_universe(particle particles[3], double dist[3], int time_delta);
+spatial velocity_from_3d_force(spatial force, int time_delta, double mass);
+double velocity_from_force(double force, int time_delta, double mass);
 
 
 /* begin actual program */
@@ -76,11 +81,11 @@ spatial velocity_from_3d_force(spatial force, int time_delta, double mass) {
 }
 
 
-spatial[3] calc_net_velocities(spatial gforce[3], int time_delta, particle particles[3]) {
-    spatial[3] velocities;
+spatial* calc_net_velocities(spatial gforce[3], int time_delta, particle particles[3]) {
+    spatial velocities[3];
 
     for (int i=0; i < 3; i++) {
-        spatial velocity{ velocity_from_force(gforce[i], time_delta, particles[i]->mass) };
+        velocities[i] = velocity_from_3d_force(gforce[i], time_delta, particles[i].mass);
     }
 
     return velocities;
@@ -102,25 +107,21 @@ void update_distances(double dist[3][3], particle particles[3]) {
 }
 
 
-spatial[3][3] update_gravity(particle particles[3], double dist[3][3]) {
-    spatial gravity[3][3] = {0};
-
+void update_gravity(spatial gravity[3][3], particle particles[3], double dist[3][3]) {
     for (int i=0; i < 3; i++) {
         for (int j=i + 1; j < 3; j++) {
-            gravity[i][j] = gravitational_force(particles[i].mass, particles[j].mass, dist[i][j]);
+            gravity[i][j] = gravitational_force(particles[i], particles[j], dist[i][j]);
             spatial reverse_force;
             reverse_force.x = -(gravity[i][j]).x;
             reverse_force.y = -(gravity[i][j]).y;
             reverse_force.z = -(gravity[i][j]).z;
-            gravity[j][i] = gravity[i][j];
+            gravity[j][i] = reverse_force;
         }
     }
-
-    return gravity;
 }
 
 
-spatial[3] sum_gravity(spatial gforce[3][3]) {
+spatial* sum_gravity(spatial gforce[3][3]) {
     spatial tot[3];
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -129,6 +130,8 @@ spatial[3] sum_gravity(spatial gforce[3][3]) {
             tot[i].z += gforce[i][j].z;
         }
     }
+
+    return tot;
 }
 
 spatial get_direction(particle p1, particle p2) {
@@ -147,35 +150,37 @@ spatial get_direction(particle p1, particle p2) {
 }
 
 
-void update_particle(particle *p, spatial velocity, int time_delta) {
-    p->position.x += p->velocity.x * time_delta + velocity.x / 3.0;  // TODO: Why divide by 3?
-    p->position.y += p->velocity.y * time_delta + velocity.y / 3.0;
-    p->position.z += p->velocity.z * time_delta + velocity.z / 3.0;
+void update_particle(particle *p, spatial *velocity, int time_delta) {
+    p->position.x += p->velocity.x * time_delta + velocity->x / 3.0;  // TODO: Why divide by 3?
+    p->position.y += p->velocity.y * time_delta + velocity->y / 3.0;
+    p->position.z += p->velocity.z * time_delta + velocity->z / 3.0;
 
-    p->velocity.x += velocity.x;
-    p->velocity.y += velocity.y;
-    p->velocity.z += velocity.z;
+    p->velocity.x += velocity->x;
+    p->velocity.y += velocity->y;
+    p->velocity.z += velocity->z;
 }
 
 void update_particles(particle particles[3], spatial velocities[3], double time_delta) {
     for (int i=0; i < 3; i++) {
-        update_particle(particles[i], velocities[i], time_delta);
+        update_particle(&particles[i], &velocities[i], time_delta);
     }
 }
 
 
-void update_universe(particle particles[3], double dist[3], int time_delta) {
+void update_universe(particle particles[3], double dist[3][3], int time_delta) {
     // 0) calc 2D array of distances between particle pairs
     update_distances(dist, particles);
 
     // 1) calc 2D array of gravitational force between particle pairs
-    spatial[3][3] gforce{ update_gravity(particles, dist) };
+    spatial gforce[3][3] = {0};
+    update_gravity(gforce, particles, dist);
 
     // 2) calc 1D array of net directional forces
-    spatial[3] net_gforce{ sum_gravity(gforce) };
+    spatial net_gforce[3];
+    net_gforce = sum_gravity(gforce);
 
     // 3) calc 1D array of net directional velocities
-    spatiel[3] velocities{ calc_net_velocities(net_gforce, time_delta, particles) };
+    spatial velocities[3]{ calc_net_velocities(net_gforce, time_delta, particles) };
 
     // 4) update all particles with directional velocities
     update_particles(particles, velocities, time_delta);
@@ -193,7 +198,7 @@ int main() {
     earth.mass = earth_mass;
     earth.radius = earth_radius;
     earth.position.x = 1.495978707e11;
-    satelite.velocity.y = sqrt(G * sun_mass / earth.position.x);  // based on stable orbit formula
+    earth.velocity.y = sqrt(G * sun_mass / earth.position.x);  // based on stable orbit formula
 
     // Init Moon
     particle moon;
@@ -205,7 +210,8 @@ int main() {
     /* init the array of particless */
     particle particles[3] = {sun, earth, moon};
 
-    double dist[3][3] = {0};
+    double dist[3][3] {0};
+    double sun_to_earth {0};
 
     /* init time and counters for iteration */
     int t{ 0 };
@@ -216,9 +222,9 @@ int main() {
     while(t < total_t) {
         update_universe(particles, dist, dt);
 
-        dist = distance(earth, satelite);
+        sun_to_earth = distance(earth, sun);
         if ((t % (print_t)) == 0) {
-            std::cout << "The satelite is  " << dist<< "  m from Earth at time " << (t / (24 * 60 * 60)) << ".\n";
+            std::cout << "The Earth is  " << dist << "  m from Sun at time " << (t / (24 * 60 * 60)) << ".\n";
         }
 
         t += dt;
