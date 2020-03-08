@@ -121,9 +121,9 @@ void sum_gravity(spatial gforce[3][3], spatial net_gforce[3]) {
     for (int i = 0; i < 3; i++) {
         spatial row;
         for (int j = 0; j < 3; j++) {
-            net_gforce[i].x += gforce[i][j].x;
-            net_gforce[i].y += gforce[i][j].y;
-            net_gforce[i].z += gforce[i][j].z;
+            row.x += gforce[i][j].x;
+            row.y += gforce[i][j].y;
+            row.z += gforce[i][j].z;
         }
         net_gforce[i] = row;
     }
@@ -146,7 +146,8 @@ spatial get_direction(particle p1, particle p2) {
 
 
 void update_particle(particle *p, spatial *velocity, int time_delta) {
-    p->position.x += p->velocity.x * time_delta + velocity->x / 3.0;  // TODO: Why divide by 3?
+    // Divide by 3 because this velocity is the END velocity due to a linear gravitational acceleration.
+    p->position.x += p->velocity.x * time_delta + velocity->x / 3.0;
     p->position.y += p->velocity.y * time_delta + velocity->y / 3.0;
     p->position.z += p->velocity.z * time_delta + velocity->z / 3.0;
 
@@ -187,21 +188,18 @@ int main() {
     // Init Sun
     particle sun;
     sun.mass = sun_mass;
-    sun.radius = sun_radius;
 
     // Init Earth
     particle earth;
     earth.mass = earth_mass;
-    earth.radius = earth_radius;
-    earth.position.x = 1.495978707e11;
+    earth.position.x = earth_sun_mean_dist;
     earth.velocity.y = sqrt(G * sun_mass / earth.position.x);  // based on stable orbit formula
 
     // Init Moon
     particle moon;
     moon.mass = moon_mass;
-    moon.radius = moon_radius;
-    moon.position.x = earth.position.x + 3.850006e8;
-    moon.velocity.y = sqrt(G * earth_mass / moon.position.x);  // based on stable orbit formula
+    moon.position.x = earth_sun_mean_dist - earth_moon_mean_dist;
+    moon.velocity.y = -1 * sqrt(G * earth_mass / earth_moon_mean_dist);  // based on stable orbit formula
 
     /* init the array of particless */
     particle particles[3] = {sun, earth, moon};
@@ -211,18 +209,18 @@ int main() {
 
     /* init time and counters for iteration */
     int t{ 0 };
-    int dt{ hour_to_sec };
+    int dt{ min_to_sec };
     int print_t{ day_to_sec };
     int total_t{ 365 * day_to_sec };
 
     while(t < total_t) {
         update_universe(particles, dist, dt);
 
-        sun_to_earth = distance(earth, sun);
+        sun_to_earth = distance(particles[0], particles[1]);
         if ((t % (print_t)) == 0) {
-            //std::cout << "Day  " << (t / day_to_sec) << ": Earth --> Sun = " << sun_to_earth << "m\n";
-            std::cout << "Day  " << (t / day_to_sec) << ": Earth @ " << particles[1].position.x
-                << ", " << particles[1].position.y << ", " << particles[1].position.z << "\n";
+            std::cout << "Day  " << (t / day_to_sec) << ": Earth --> Sun = " << sun_to_earth << "m\n";
+            //std::cout << "Day  " << (t / day_to_sec) << ": Earth @ " << particles[1].position.x
+            //    << ", " << particles[1].position.y << ", " << particles[1].position.z << "\n";
         }
 
         t += dt;
