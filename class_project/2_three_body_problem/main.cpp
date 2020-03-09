@@ -218,7 +218,7 @@ int main() {
 
         sun_to_earth = distance(particles[0], particles[1]);
         if ((t % (print_t)) == 0) {
-            std::cout << "Day  " << (t / day_to_sec) << ": Earth --> Sun = " << sun_to_earth << "m\n";
+            std::cout << "Day  " << (t / day_to_sec) << ": Earth->Sun = " << sun_to_earth << " m\n";
             //std::cout << "Day  " << (t / day_to_sec) << ": Earth @ " << particles[1].position.x
             //    << ", " << particles[1].position.y << ", " << particles[1].position.z << "\n";
         }
