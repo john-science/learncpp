@@ -11,6 +11,7 @@ const double c{ 299792458 };                // m / s
 const int min_to_sec{ 60 };
 const int hour_to_sec{ 3600 };
 const int day_to_sec{ 86400 };
+const int year_to_sec{ 31557600 };
 
 /* astronomical data (kg and m) */
 const double sun_mass{ 1.98847e30 };

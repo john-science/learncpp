@@ -43,11 +43,6 @@ double velocity_from_force(double force, int time_delta, double mass);
 
 
 /* begin actual program */
-double lambda(double velocity) {
-    return 1.0 / sqrt(1.0 - ((velocity * velocity) / (c * c)));
-}
-
-
 spatial gravitational_force(particle p1, particle p2, double dist) {
     spatial force {get_direction(p1, p2)};
     double magnitude{gravitational_force(p1.mass, p2.mass, dist)};
@@ -146,10 +141,10 @@ spatial get_direction(particle p1, particle p2) {
 
 
 void update_particle(particle *p, spatial *velocity, int time_delta) {
-    // Divide by 3 because this velocity is the END velocity due to a linear gravitational acceleration.
-    p->position.x += p->velocity.x * time_delta + velocity->x / 3.0;
-    p->position.y += p->velocity.y * time_delta + velocity->y / 3.0;
-    p->position.z += p->velocity.z * time_delta + velocity->z / 3.0;
+    // Divide by 2 because this velocity is the END velocity due to a linear gravitational acceleration.
+    p->position.x += p->velocity.x * time_delta + velocity->x * time_delta / 2.0;
+    p->position.y += p->velocity.y * time_delta + velocity->y * time_delta / 2.0;
+    p->position.z += p->velocity.z * time_delta + velocity->z * time_delta / 2.0;
 
     p->velocity.x += velocity->x;
     p->velocity.y += velocity->y;
@@ -210,8 +205,8 @@ int main() {
     /* init time and counters for iteration */
     int t{ 0 };
     int dt{ min_to_sec };
-    int print_t{ day_to_sec };
-    int total_t{ 365 * day_to_sec };
+    int print_t{ year_to_sec };
+    int total_t{ 10 * year_to_sec + 1 };
 
     while(t < total_t) {
         update_universe(particles, dist, dt);
