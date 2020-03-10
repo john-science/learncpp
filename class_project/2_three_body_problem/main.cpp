@@ -201,6 +201,8 @@ int main() {
 
     double dist[3][3] {0};
     double sun_to_earth {0};
+    double min_dist { 2 * distance(sun, earth) };
+    double max_dist { 0 };
 
     /* init time and counters for iteration */
     int t{ 0 };
@@ -212,6 +214,12 @@ int main() {
         update_universe(particles, dist, dt);
 
         sun_to_earth = distance(particles[0], particles[1]);
+        if (sun_to_earth < min_dist) {
+            min_dist = sun_to_earth;
+        } else if (sun_to_earth > min_dist) {
+            max_dist = sun_to_earth;
+        }
+
         if ((t % (print_t)) == 0) {
             std::cout << "Day  " << (t / day_to_sec) << ": Earth->Sun = " << sun_to_earth << " m\n";
             //std::cout << "Day  " << (t / day_to_sec) << ": Earth @ " << particles[1].position.x
@@ -220,6 +228,9 @@ int main() {
 
         t += dt;
     }
+
+    cout << "Min distance: " << min_dist << "\n";
+    cout << "Max distance: " << max_dist << "\n";
 
     return 0;
 }
