@@ -216,7 +216,7 @@ int main() {
         sun_to_earth = distance(particles[0], particles[1]);
         if (sun_to_earth < min_dist) {
             min_dist = sun_to_earth;
-        } else if (sun_to_earth > min_dist) {
+        } else if (sun_to_earth > max_dist) {
             max_dist = sun_to_earth;
         }
 
@@ -229,8 +229,8 @@ int main() {
         t += dt;
     }
 
-    cout << "Min distance: " << min_dist << "\n";
-    cout << "Max distance: " << max_dist << "\n";
+    std::cout << "Min distance: " << min_dist << "\n";
+    std::cout << "Max distance: " << max_dist << "\n\n";
 
     return 0;
 }
