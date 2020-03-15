@@ -1,8 +1,6 @@
 #if !defined(SPATIAL_H)
 #define SPATIAL_H
 
-#include <iostream>
-
 
 struct spatial {
     double x { 0 };
@@ -10,7 +8,7 @@ struct spatial {
     double z { 0 };
 
     spatial operator+(const spatial a) {
-	spatial new_s;
+        spatial new_s;
         new_s.x = this->x + a.x;
         new_s.y = this->y + a.y;
         new_s.z = this->z + a.z;

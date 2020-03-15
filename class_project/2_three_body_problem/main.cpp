@@ -1,4 +1,4 @@
-/** g++ main.cpp --std=c++17 -o three_body_problem.exe
+/** g++ main.cpp --std=c++17 -o three_body.exe
  *
  * This is the three-body problem in Newtownian physics.
  * The example below is the Sun, Earth, and Earth's Moon.
@@ -7,21 +7,10 @@
 #include <math.h>
 #include "scientific_data.h"
 #include "spatial.h"
-
-/* scientifically meaningful data types */
-typedef struct particle {
-  double mass{ 100.0 };  // kg
-  double radius{ 1.0 };  // m
-  spatial position;      // m
-  spatial velocity;      // m/s
-  /* TODO: Some particles will be small, and we can skip calculating their graviational forces:
-  bool tiny{ false };
-  */
-} particle;
+#include "particle.h"
 
 /* forward declarations */
 void calc_net_velocities(spatial velocities[3], spatial gforce[3], int time_delta, particle particles[3]);
-double distance(particle p1, particle p2);
 spatial get_direction(particle p1, particle p2);
 double gravitational_force(double mass1, double mass2, double dist);
 spatial gravitational_force(particle p1, particle p2, double dist);
@@ -41,9 +30,7 @@ spatial gravitational_force(particle p1, particle p2, double dist) {
     spatial force {get_direction(p1, p2)};
     double magnitude{gravitational_force(p1.mass, p2.mass, dist)};
 
-    force.x *= magnitude;
-    force.y *= magnitude;
-    force.z *= magnitude;
+    force *= magnitude;
 
     return force;
 }
@@ -77,15 +64,10 @@ void calc_net_velocities(spatial velocities[3], spatial gforce[3], int time_delt
 }
 
 
-double distance(particle p1, particle p2) {
-    return sqrt(pow(p2.position.x - p1.position.x, 2) + pow(p2.position.y - p1.position.y, 2) + pow(p2.position.z - p1.position.z, 2));
-}
-
-
 void update_distances(double dist[3][3], particle particles[3]) {
     for (int i=0; i < 3; i++) {
         for (int j=i + 1; j < 3; j++) {
-            dist[i][j] = distance(particles[i], particles[j]);
+            dist[i][j] = particles[i].distance(particles[j]);
             dist[j][i] = dist[i][j];
         }
     }
@@ -195,7 +177,7 @@ int main() {
 
     double dist[3][3] {0};
     double sun_to_earth {0};
-    double min_dist { 2 * distance(sun, earth) };
+    double min_dist { 2 * sun.distance(earth) };
     double max_dist { 0 };
 
     /* init time and counters for iteration */
@@ -207,7 +189,7 @@ int main() {
     while(t < total_t) {
         update_universe(particles, dist, dt);
 
-        sun_to_earth = distance(particles[0], particles[1]);
+        sun_to_earth = particles[0].distance(particles[1]);
         if (sun_to_earth < min_dist) {
             min_dist = sun_to_earth;
         } else if (sun_to_earth > max_dist) {
