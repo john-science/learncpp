@@ -1,4 +1,6 @@
-// compiled with: g++ main.cpp --std=c++17 -o structs.exe
+#if !defined(SPATIAL_H)
+#define SPATIAL_H
+
 #include <iostream>
 
 
@@ -66,26 +68,5 @@ std::ostream& operator<<(std::ostream& os, const spatial& s) {
 }
 
 
-int main() {
-    // instantiate your structs
-    spatial v1{-3, 1, 0};
-    spatial v2{1.5, 2.5, 0.01};
-
-    std::cout << "v1:\t" << v1 << "\n";
-    std::cout << "v2:\t" << v2 << "\n\n";
-
-    // call the struct += method to add two structs
-    v1 += v2;
-    std::cout << "v1+v2:\t" << v1 << "\n\n";
-
-    // call the struct *= method to multiple your coordinates
-    v2 *= 100;
-    std::cout << "v2*100:\t" << v2 << "\n\n";
-
-    // try out the addition operator
-    spatial v3 = v1 + v2;
-    std::cout << "v3:\t" << v3 << "\n\n";
-
-    return 0;
-}
+#endif
 

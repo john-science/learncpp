@@ -6,15 +6,9 @@
 #include <iostream>
 #include <math.h>
 #include "scientific_data.h"
+#include "spatial.h"
 
 /* scientifically meaningful data types */
-typedef struct spatial {
-  double x { 0 };
-  double y { 0 };
-  double z { 0 };
-} spatial;
-
-
 typedef struct particle {
   double mass{ 100.0 };  // kg
   double radius{ 1.0 };  // m
