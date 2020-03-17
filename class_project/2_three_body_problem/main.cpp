@@ -21,8 +21,7 @@ void update_gravity(spatial gforce[3], particle particles[3], double dist[3][3])
 void update_particle(particle *p, spatial velocity, int time_delta);
 void update_particles(particle particles[3], spatial velocities[3], double time_delta);
 void update_universe(particle particles[3], double dist[3], int time_delta);
-spatial velocity_from_3d_force(spatial force, int time_delta, double mass);
-double velocity_from_force(double force, int time_delta, double mass);
+spatial velocity_from_force(spatial force, int time_delta, double mass);
 
 
 /* begin actual program */
@@ -41,25 +40,14 @@ double gravitational_force(double mass1, double mass2, double dist) {
 }
 
 
-double velocity_from_force(double force, int time_delta, double mass) {
-    return (force * time_delta) / mass;
-}
-
-
-spatial velocity_from_3d_force(spatial force, int time_delta, double mass) {
-    spatial velocity;
-
-    velocity.x = velocity_from_force(force.x, time_delta, mass);
-    velocity.y = velocity_from_force(force.y, time_delta, mass);
-    velocity.z = velocity_from_force(force.z, time_delta, mass);
-
-    return velocity;
+spatial velocity_from_force(spatial force, int time_delta, double mass) {
+    return force * (time_delta / mass);
 }
 
 
 void calc_net_velocities(spatial velocities[3], spatial gforce[3], int time_delta, particle particles[3]) {
     for (int i=0; i < 3; i++) {
-        velocities[i] = velocity_from_3d_force(gforce[i], time_delta, particles[i].mass);
+        velocities[i] = velocity_from_force(gforce[i], time_delta, particles[i].mass);
     }
 }
 
@@ -78,11 +66,7 @@ void update_gravity(spatial gravity[3][3], particle particles[3], double dist[3]
     for (int i=0; i < 3; i++) {
         for (int j=i + 1; j < 3; j++) {
             gravity[i][j] = gravitational_force(particles[i], particles[j], dist[i][j]);
-            spatial reverse_force;
-            reverse_force.x = -(gravity[i][j]).x;
-            reverse_force.y = -(gravity[i][j]).y;
-            reverse_force.z = -(gravity[i][j]).z;
-            gravity[j][i] = reverse_force;
+            gravity[j][i] = gravity[i][j] * -1.0;
         }
     }
 }
