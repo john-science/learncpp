@@ -18,7 +18,7 @@ double lambda(double velocity);
 void sum_gravity(spatial gforce[3][3], spatial net_gforce[3]);
 void update_distances(double dist[3][3], particle particles[3]);
 void update_gravity(spatial gforce[3], particle particles[3], double dist[3][3]);
-void update_particle(particle *p, spatial *velocity, int time_delta);
+void update_particle(particle *p, spatial velocity, int time_delta);
 void update_particles(particle particles[3], spatial velocities[3], double time_delta);
 void update_universe(particle particles[3], double dist[3], int time_delta);
 spatial velocity_from_3d_force(spatial force, int time_delta, double mass);
@@ -92,9 +92,7 @@ void sum_gravity(spatial gforce[3][3], spatial net_gforce[3]) {
     for (int i = 0; i < 3; i++) {
         spatial row;
         for (int j = 0; j < 3; j++) {
-            row.x += gforce[i][j].x;
-            row.y += gforce[i][j].y;
-            row.z += gforce[i][j].z;
+            row += gforce[i][j];
         }
         net_gforce[i] = row;
     }
@@ -102,34 +100,26 @@ void sum_gravity(spatial gforce[3][3], spatial net_gforce[3]) {
 
 spatial get_direction(particle p1, particle p2) {
     spatial direction;
-    direction.x = p2.position.x - p1.position.x;
-    direction.y = p2.position.y - p1.position.y;
-    direction.z = p2.position.z - p1.position.z;
+    direction = p2.position - p1.position;
 
     double total{ abs(direction.x) + abs(direction.y) + abs(direction.z) };
 
-    direction.x /= total;
-    direction.y /= total;
-    direction.z /= total;
+    direction /= total;
 
     return direction;
 }
 
 
-void update_particle(particle *p, spatial *velocity, int time_delta) {
-    // Divide by 2 because this velocity is the END velocity due to a linear gravitational acceleration.
-    p->position.x += p->velocity.x * time_delta + velocity->x * time_delta / 2.0;
-    p->position.y += p->velocity.y * time_delta + velocity->y * time_delta / 2.0;
-    p->position.z += p->velocity.z * time_delta + velocity->z * time_delta / 2.0;
+void update_particle(particle *p, spatial velocity, int time_delta) {
+    // Divide by 3 because this velocity is the END velocity due to a linear gravitational acceleration.
+    p->position += p->velocity * time_delta + velocity * (time_delta / 3.0);
 
-    p->velocity.x += velocity->x;
-    p->velocity.y += velocity->y;
-    p->velocity.z += velocity->z;
+    p->velocity += velocity;
 }
 
 void update_particles(particle particles[3], spatial velocities[3], double time_delta) {
     for (int i=0; i < 3; i++) {
-        update_particle(&particles[i], &velocities[i], time_delta);
+        update_particle(&particles[i], velocities[i], time_delta);
     }
 }
 
@@ -182,7 +172,7 @@ int main() {
 
     /* init time and counters for iteration */
     int t{ 0 };
-    int dt{ min_to_sec };
+    int dt{ hour_to_sec };
     int print_t{ year_to_sec };
     int total_t{ 10 * year_to_sec + 1 };
 

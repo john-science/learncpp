@@ -25,6 +25,24 @@ struct spatial {
         return new_s;
     }
 
+    spatial operator*(double m) {
+        spatial new_s;
+        new_s.x = this->x * m;
+        new_s.y = this->y * m;
+        new_s.z = this->z * m;
+
+        return new_s;
+    }
+
+    spatial operator/(double m) {
+        spatial new_s;
+        new_s.x = this->x / m;
+        new_s.y = this->y / m;
+        new_s.z = this->z / m;
+
+        return new_s;
+    }
+
     spatial operator+=(const spatial a) {
         this->x += a.x;
         this->y += a.y;
