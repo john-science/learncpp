@@ -86,9 +86,8 @@ spatial get_direction(particle p1, particle p2) {
     spatial direction;
     direction = p2.position - p1.position;
 
-    double total{ abs(direction.x) + abs(direction.y) + abs(direction.z) };
-
-    direction /= total;
+    double length{ sqrt(abs(direction.x * direction.x) + abs(direction.y * direction.y) + abs(direction.z * direction.z)) };
+    direction /= length;
 
     return direction;
 }
@@ -137,50 +136,48 @@ int main() {
     // Init Earth
     particle earth;
     earth.mass = earth_mass;
-    earth.position.x = earth_sun_mean_dist;
-    earth.velocity.y = sqrt(G * sun_mass / earth.position.x);  // based on stable orbit formula
+    earth.position.x = -2.521092863852298E+10;  // values from: https://ssd.jpl.nasa.gov/horizons.cgi
+    earth.position.y = 1.449279195712076E+11;
+    earth.position.z = -6.164888475164771E+5;
+    earth.velocity.x = -2.983983333368269E+4;
+    earth.velocity.y = -5.207633918704476E+3;
+    earth.velocity.z = 6.169062303484907E-2;
 
     // Init Moon
     particle moon;
     moon.mass = moon_mass;
-    moon.position.x = earth_sun_mean_dist - earth_moon_mean_dist;
-    moon.velocity.y = -1 * sqrt(G * earth_mass / earth_moon_mean_dist);  // based on stable orbit formula
+    moon.position.x = -2.552857888050620E+10;
+    moon.position.y = 1.446860363961675E+11;
+    moon.position.z = 3.593933517466486E+7;
+    moon.velocity.x = -2.927904627038706E+4;
+    moon.velocity.y = -6.007566180814270E+3;
+    moon.velocity.z = -1.577640655646029;
 
     /* init the array of particless */
     particle particles[3] = {sun, earth, moon};
-
     double dist[3][3] {0};
-    double sun_to_earth {0};
-    double min_dist { 2 * sun.distance(earth) };
-    double max_dist { 0 };
 
     /* init time and counters for iteration */
     int t{ 0 };
-    int dt{ hour_to_sec };
-    int print_t{ year_to_sec };
-    int total_t{ 10 * year_to_sec + 1 };
+    int dt{ min_to_sec };
+    int print_t{ 30 * day_to_sec };
+    int total_t{ year_to_sec };
+
+    std::cout << "\nEarth location: " << particles[1].position << "\n";
+    std::cout << "Earth velocity: " << particles[1].velocity << "\n\n";
 
     while(t < total_t) {
         update_universe(particles, dist, dt);
 
-        sun_to_earth = particles[0].distance(particles[1]);
-        if (sun_to_earth < min_dist) {
-            min_dist = sun_to_earth;
-        } else if (sun_to_earth > max_dist) {
-            max_dist = sun_to_earth;
-        }
-
         if ((t % (print_t)) == 0) {
-            std::cout << "Day  " << (t / day_to_sec) << ": Earth->Sun = " << sun_to_earth << " m\n";
-            //std::cout << "Day  " << (t / day_to_sec) << ": Earth @ " << particles[1].position.x
-            //    << ", " << particles[1].position.y << ", " << particles[1].position.z << "\n";
+            std::cout << "Day  " << (t / day_to_sec) << ": Earth->Sun = " << particles[0].distance(particles[1]) << " m\n";
         }
 
         t += dt;
     }
 
-    std::cout << "Min distance: " << min_dist << "\n";
-    std::cout << "Max distance: " << max_dist << "\n\n";
+    std::cout << "\nEarth location: " << particles[1].position << "\n";
+    std::cout << "Earth velocity: " << particles[1].velocity << "\n\n";
 
     return 0;
 }
