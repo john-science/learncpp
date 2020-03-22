@@ -16,10 +16,10 @@ const int year_to_sec{ 31557600 };
 /* astronomical data (kg and m) */
 const double sun_mass{ 1.98847e30 };
 const double sun_radius{ 6.96342e8 };
-const double earth_mass{ 5.9722e24 };
+const double earth_mass{ 5.97219e24 };
 const double earth_radius{ 6.378e6 };
 const double earth_sun_mean_dist{ 1.495978707e11 };
-const double moon_mass{ 7.342e22 };
+const double moon_mass{ 7.349e22 };
 const double moon_radius{ 1.7374e6 };
 const double earth_moon_mean_dist{ 3.84402e8 };
 
