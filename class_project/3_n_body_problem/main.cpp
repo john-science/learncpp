@@ -9,6 +9,7 @@
 #include "spatial.h"
 #include "particle.h"
 
+// TODO: Move everything that says "3" here to dynamic-length arrays.
 /* forward declarations */
 void calc_net_velocities(spatial velocities[3], spatial gforce[3], int time_delta, particle particles[3]);
 spatial get_direction(particle p1, particle p2);
@@ -128,10 +129,13 @@ void update_universe(particle particles[3], double dist[3][3], int time_delta) {
 }
 
 
+// TODO: Create a class for the Universe
 int main() {
     // Init Sun
     particle sun;
     sun.mass = sun_mass;
+
+    // TODO: I would like to read this type of data from a text file at run time.
 
     // Init Earth
     particle earth;
