@@ -9,7 +9,7 @@
 #include "spatial.h"
 #include "particle.h"
 
-// TODO: Move everything that says "3" here to dynamic-length arrays.
+// TODO: Move everything from size 3 arrays to vectors.
 /* forward declarations */
 void calc_net_velocities(spatial velocities[3], spatial gforce[3], int time_delta, particle particles[3]);
 spatial get_direction(particle p1, particle p2);
