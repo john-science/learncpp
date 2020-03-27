@@ -11,12 +11,13 @@
 
 // TODO: Move everything from size 3 arrays to vectors.
 /* forward declarations */
-void calc_net_velocities(spatial velocities[3], spatial gforce[3], int time_delta, particle particles[3]);
+void calc_net_velocities(std::vector<spatial> velocities, std::vector<spatial> gforce, int time_delta,
+                         std::vector<particle> particles);
 spatial get_direction(particle p1, particle p2);
 double gravitational_force(double mass1, double mass2, double dist);
 spatial gravitational_force(particle p1, particle p2, double dist);
 double lambda(double velocity);
-void sum_gravity(spatial gforce[3][3], spatial net_gforce[3]);
+void sum_gravity(std::vector<std::vector<spatial>> gforce, std::vector<spatial> net_gforce);
 void update_distances(double dist[3][3], particle particles[3]);
 void update_gravity(spatial gforce[3], particle particles[3], double dist[3][3]);
 void update_particle(particle *p, spatial velocity, int time_delta);
@@ -46,8 +47,9 @@ spatial velocity_from_force(spatial force, int time_delta, double mass) {
 }
 
 
-void calc_net_velocities(spatial velocities[3], spatial gforce[3], int time_delta, particle particles[3]) {
-    for (int i=0; i < 3; i++) {
+void calc_net_velocities(std::vector<spatial> velocities, std::vector<spatial> gforce, int time_delta,
+                         std::vector<particle> particles) {
+    for (int i=0; i < velocities.size(); i++) {
         velocities[i] = velocity_from_force(gforce[i], time_delta, particles[i].mass);
     }
 }
@@ -73,10 +75,12 @@ void update_gravity(spatial gravity[3][3], particle particles[3], double dist[3]
 }
 
 
-void sum_gravity(spatial gforce[3][3], spatial net_gforce[3]) {
-    for (int i = 0; i < 3; i++) {
+void sum_gravity(std::vector<std::vector<spatial>> gforce, std::vector<spatial> net_gforce) {
+    int num_particles{net_gforce.size()};
+
+    for (int i = 0; i < num_particles; i++) {
         spatial row;
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < num_particles; j++) {
             row += gforce[i][j];
         }
         net_gforce[i] = row;
@@ -158,8 +162,9 @@ int main() {
     moon.velocity.z = -1.577640655646029;
 
     /* init the array of particless */
-    particle particles[3] = {sun, earth, moon};
-    double dist[3][3] {0};
+    std::vector<particle> particles {sun, earth, moon};
+    int num_particles = particles.size();
+    double dist[num_particles][num_particles] {0};
 
     /* init time and counters for iteration */
     int t{ 0 };
