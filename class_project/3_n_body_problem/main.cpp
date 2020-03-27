@@ -5,6 +5,7 @@
  */
 #include <iostream>
 #include <math.h>
+#include <vector>
 #include "scientific_data.h"
 #include "spatial.h"
 #include "particle.h"
@@ -18,11 +19,12 @@ double gravitational_force(double mass1, double mass2, double dist);
 spatial gravitational_force(particle p1, particle p2, double dist);
 double lambda(double velocity);
 void sum_gravity(std::vector<std::vector<spatial>> gforce, std::vector<spatial> net_gforce);
-void update_distances(double dist[3][3], particle particles[3]);
-void update_gravity(spatial gforce[3], particle particles[3], double dist[3][3]);
+void update_distances(std::vector<std::vector<double>> dist, std::vector<particle> particles);
+void update_gravity(std::vector<spatial> gforce, std::vector<particle> particles,
+                    std::vector<std::vector<double>> dist);
 void update_particle(particle *p, spatial velocity, int time_delta);
-void update_particles(particle particles[3], spatial velocities[3], double time_delta);
-void update_universe(particle particles[3], double dist[3], int time_delta);
+void update_particles(std::vector<particle> particles, std::vector<spatial> velocities, double time_delta);
+void update_universe(std::vector<particle> particles, std::vector<std::vector<double>> dist, int time_delta);
 spatial velocity_from_force(spatial force, int time_delta, double mass);
 
 
@@ -49,15 +51,17 @@ spatial velocity_from_force(spatial force, int time_delta, double mass) {
 
 void calc_net_velocities(std::vector<spatial> velocities, std::vector<spatial> gforce, int time_delta,
                          std::vector<particle> particles) {
-    for (int i=0; i < velocities.size(); i++) {
+    for (int i=0; i < (int)(velocities.size()); i++) {
         velocities[i] = velocity_from_force(gforce[i], time_delta, particles[i].mass);
     }
 }
 
 
-void update_distances(double dist[3][3], particle particles[3]) {
-    for (int i=0; i < 3; i++) {
-        for (int j=i + 1; j < 3; j++) {
+void update_distances(std::vector<std::vector<double>> dist, std::vector<particle> particles) {
+    int num_particles{(int)(particles.size())};
+
+    for (int i=0; i < num_particles; i++) {
+        for (int j=i + 1; j < num_particles; j++) {
             dist[i][j] = particles[i].distance(particles[j]);
             dist[j][i] = dist[i][j];
         }
@@ -65,9 +69,12 @@ void update_distances(double dist[3][3], particle particles[3]) {
 }
 
 
-void update_gravity(spatial gravity[3][3], particle particles[3], double dist[3][3]) {
-    for (int i=0; i < 3; i++) {
-        for (int j=i + 1; j < 3; j++) {
+void update_gravity(std::vector<std::vector<spatial>> gravity, std::vector<particle> particles,
+                    std::vector<std::vector<double>> dist) {
+    int num_particles{(int)(particles.size())};
+
+    for (int i=0; i < num_particles; i++) {
+        for (int j=i + 1; j < num_particles; j++) {
             gravity[i][j] = gravitational_force(particles[i], particles[j], dist[i][j]);
             gravity[j][i] = gravity[i][j] * -1.0;
         }
@@ -76,7 +83,7 @@ void update_gravity(spatial gravity[3][3], particle particles[3], double dist[3]
 
 
 void sum_gravity(std::vector<std::vector<spatial>> gforce, std::vector<spatial> net_gforce) {
-    int num_particles{net_gforce.size()};
+    int num_particles{(int)(net_gforce.size())};
 
     for (int i = 0; i < num_particles; i++) {
         spatial row;
@@ -105,27 +112,31 @@ void update_particle(particle *p, spatial velocity, int time_delta) {
     p->velocity += velocity;
 }
 
-void update_particles(particle particles[3], spatial velocities[3], double time_delta) {
-    for (int i=0; i < 3; i++) {
+void update_particles(std::vector<particle> particles, std::vector<spatial> velocities, double time_delta) {
+    int num_particles{(int)(particles.size())};
+
+    for (int i=0; i < num_particles; i++) {
         update_particle(&particles[i], velocities[i], time_delta);
     }
 }
 
 
-void update_universe(particle particles[3], double dist[3][3], int time_delta) {
+void update_universe(std::vector<particle> particles, std::vector<std::vector<double>> dist, int time_delta) {
+    int num_particles{(int)(particles.size())};
+
     // 0) calc 2D array of distances between particle pairs
     update_distances(dist, particles);
 
     // 1) calc 2D array of gravitational force between particle pairs
-    spatial gforce[3][3];
+    std::vector<std::vector<spatial>> gforce(num_particles, std::vector<spatial>(num_particles));
     update_gravity(gforce, particles, dist);
 
     // 2) calc 1D array of net directional forces
-    spatial net_gforce[3];
+    std::vector<spatial> net_gforce(num_particles);
     sum_gravity(gforce, net_gforce);
 
     // 3) calc 1D array of net directional velocities
-    spatial velocities[3];
+    std::vector<spatial> velocities(velocities);
     calc_net_velocities(velocities, net_gforce, time_delta, particles);
 
     // 4) update all particles with directional velocities
@@ -163,8 +174,8 @@ int main() {
 
     /* init the array of particless */
     std::vector<particle> particles {sun, earth, moon};
-    int num_particles = particles.size();
-    double dist[num_particles][num_particles] {0};
+    int num_particles = (int)(particles.size());
+    std::vector<std::vector<double>> dist(num_particles, std::vector<double>(num_particles, 0));
 
     /* init time and counters for iteration */
     int t{ 0 };
