@@ -10,7 +10,6 @@
 #include "spatial.h"
 #include "particle.h"
 
-// TODO: Move everything from size 3 arrays to vectors.
 /* forward declarations */
 void calc_net_velocities(std::vector<spatial> velocities, std::vector<spatial> gforce, int time_delta,
                          std::vector<particle> particles);
@@ -136,7 +135,7 @@ void update_universe(std::vector<particle> particles, std::vector<std::vector<do
     sum_gravity(gforce, net_gforce);
 
     // 3) calc 1D array of net directional velocities
-    std::vector<spatial> velocities(velocities);
+    std::vector<spatial> velocities(num_particles);
     calc_net_velocities(velocities, net_gforce, time_delta, particles);
 
     // 4) update all particles with directional velocities
