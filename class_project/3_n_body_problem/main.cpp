@@ -7,6 +7,7 @@
 #include <math.h>
 #include <sstream>
 #include <string>
+#include <stdexcept>
 #include <vector>
 #include <fstream>
 #include "scientific_data.h"
@@ -48,6 +49,10 @@ std::vector<particle> read_particle_file(std::string file_path) {
                                  >> p.velocity.x >> p.velocity.y >> p.velocity.z) {
             particles.push_back(p);
         }
+    }
+
+    if (particles.size() < 2) {
+        throw std::length_error("Two few particles found in the input file.");
     }
 
     return particles;
@@ -127,7 +132,7 @@ void sum_gravity(std::vector<std::vector<spatial>> gforce, std::vector<spatial> 
 }
 
 
-# TODO: Should this be part of the particle struct?
+// TODO: Should this be part of the particle struct?
 /** Get the unit directional vector between two particles. */
 spatial get_direction(particle p1, particle p2) {
     spatial direction;
