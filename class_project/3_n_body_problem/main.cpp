@@ -5,7 +5,10 @@
  */
 #include <iostream>
 #include <math.h>
+#include <sstream>
+#include <string>
 #include <vector>
+#include <fstream>
 #include "scientific_data.h"
 #include "spatial.h"
 #include "particle.h"
@@ -17,6 +20,7 @@ spatial get_direction(particle p1, particle p2);
 double gravitational_force(double mass1, double mass2, double dist);
 spatial gravitational_force(particle p1, particle p2, double dist);
 double lambda(double velocity);
+std::vector<particle> read_particle_file(std::string file_path);
 void sum_gravity(std::vector<std::vector<spatial>> gforce, std::vector<spatial> net_gforce);
 void update_distances(std::vector<std::vector<double>> dist, std::vector<particle> particles);
 void update_gravity(std::vector<spatial> gforce, std::vector<particle> particles,
@@ -28,6 +32,31 @@ spatial velocity_from_force(spatial force, int time_delta, double mass);
 
 
 /* begin actual program */
+
+
+/** helper function to read custom text file */
+std::vector<particle> read_particle_file(std::string file_path) {
+    std::vector<particle> particles;
+
+    std::ifstream infile{file_path};
+    std::string line;
+    std::string name;
+    while(std::getline(infile, line))
+    {
+        if (line[0] == '#' || line.length() < 6) { continue;}
+
+        std::stringstream ss(line);
+        particle p;
+        if (ss >> name >> p.mass >> p.position.x >> p.position.y >> p.position.z
+                                 >> p.velocity.x >> p.velocity.y >> p.velocity.z) {
+            particles.push_back(p);
+        }
+    }
+
+    return particles;
+}
+
+
 spatial gravitational_force(particle p1, particle p2, double dist) {
     spatial force {get_direction(p1, p2)};
     double magnitude{gravitational_force(p1.mass, p2.mass, dist)};
@@ -143,36 +172,11 @@ void update_universe(std::vector<particle> particles, std::vector<std::vector<do
 }
 
 
+// TODO: Probably I should be using km, not meters.
 // TODO: Create a class for the Universe
 int main() {
-    // Init Sun
-    particle sun;
-    sun.mass = sun_mass;
-
-    // TODO: I would like to read this type of data from a text file at run time.
-
-    // Init Earth
-    particle earth;
-    earth.mass = earth_mass;
-    earth.position.x = -2.521092863852298E+10;  // values from: https://ssd.jpl.nasa.gov/horizons.cgi
-    earth.position.y = 1.449279195712076E+11;
-    earth.position.z = -6.164888475164771E+5;
-    earth.velocity.x = -2.983983333368269E+4;
-    earth.velocity.y = -5.207633918704476E+3;
-    earth.velocity.z = 6.169062303484907E-2;
-
-    // Init Moon
-    particle moon;
-    moon.mass = moon_mass;
-    moon.position.x = -2.552857888050620E+10;
-    moon.position.y = 1.446860363961675E+11;
-    moon.position.z = 3.593933517466486E+7;
-    moon.velocity.x = -2.927904627038706E+4;
-    moon.velocity.y = -6.007566180814270E+3;
-    moon.velocity.z = -1.577640655646029;
-
     /* init the array of particless */
-    std::vector<particle> particles {sun, earth, moon};
+    std::vector<particle> particles {read_particle_file("particle_data.txt")};
     int num_particles = (int)(particles.size());
     std::vector<std::vector<double>> dist(num_particles, std::vector<double>(num_particles, 0));
 
