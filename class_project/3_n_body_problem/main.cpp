@@ -31,9 +31,6 @@ void update_universe(std::vector<particle> particles, std::vector<std::vector<do
 spatial velocity_from_force(spatial force, int time_delta, double mass);
 
 
-/* begin actual program */
-
-
 /** helper function to read custom text file */
 std::vector<particle> read_particle_file(std::string file_path) {
     std::vector<particle> particles;
@@ -57,6 +54,7 @@ std::vector<particle> read_particle_file(std::string file_path) {
 }
 
 
+/** Calculate the gravitional force (as a directional vector) between two particles */
 spatial gravitational_force(particle p1, particle p2, double dist) {
     spatial force {get_direction(p1, p2)};
     double magnitude{gravitational_force(p1.mass, p2.mass, dist)};
@@ -67,16 +65,19 @@ spatial gravitational_force(particle p1, particle p2, double dist) {
 }
 
 
+/** Calculate the magnitude of the graviational force between two particles */
 double gravitational_force(double mass1, double mass2, double dist) {
     return G * mass1 * mass2 / (dist * dist);
 }
 
 
+/** Using the linearized approximation, calculate the final velocity from a constant force applied over time */
 spatial velocity_from_force(spatial force, int time_delta, double mass) {
     return force * (time_delta / mass);
 }
 
 
+/** Sum N directional velocities together to get a net velocity */
 void calc_net_velocities(std::vector<spatial> velocities, std::vector<spatial> gforce, int time_delta,
                          std::vector<particle> particles) {
     for (int i=0; i < (int)(velocities.size()); i++) {
@@ -85,6 +86,7 @@ void calc_net_velocities(std::vector<spatial> velocities, std::vector<spatial> g
 }
 
 
+/** (Re-)Calculate the Distances between all the particles */
 void update_distances(std::vector<std::vector<double>> dist, std::vector<particle> particles) {
     int num_particles{(int)(particles.size())};
 
@@ -97,6 +99,7 @@ void update_distances(std::vector<std::vector<double>> dist, std::vector<particl
 }
 
 
+/** (Re-)Calculate the (directional) gravitational forces between all the pairs of particles */
 void update_gravity(std::vector<std::vector<spatial>> gravity, std::vector<particle> particles,
                     std::vector<std::vector<double>> dist) {
     int num_particles{(int)(particles.size())};
@@ -110,6 +113,7 @@ void update_gravity(std::vector<std::vector<spatial>> gravity, std::vector<parti
 }
 
 
+/** Sum all the (directional) gravitational forces on one particle */
 void sum_gravity(std::vector<std::vector<spatial>> gforce, std::vector<spatial> net_gforce) {
     int num_particles{(int)(net_gforce.size())};
 
@@ -122,6 +126,9 @@ void sum_gravity(std::vector<std::vector<spatial>> gforce, std::vector<spatial> 
     }
 }
 
+
+# TODO: Should this be part of the particle struct?
+/** Get the unit directional vector between two particles. */
 spatial get_direction(particle p1, particle p2) {
     spatial direction;
     direction = p2.position - p1.position;
@@ -133,6 +140,7 @@ spatial get_direction(particle p1, particle p2) {
 }
 
 
+/** Update the position and velocity of a particle, based on it's velocity over a set time interval */
 void update_particle(particle *p, spatial velocity, int time_delta) {
     // Divide by 3 because this velocity is the END velocity due to a linear gravitational acceleration.
     p->position += p->velocity * time_delta + velocity * (time_delta / 3.0);
@@ -140,6 +148,8 @@ void update_particle(particle *p, spatial velocity, int time_delta) {
     p->velocity += velocity;
 }
 
+
+/** Update all the particles in the system, given their complete set of velocities */
 void update_particles(std::vector<particle> particles, std::vector<spatial> velocities, double time_delta) {
     int num_particles{(int)(particles.size())};
 
@@ -149,6 +159,7 @@ void update_particles(std::vector<particle> particles, std::vector<spatial> velo
 }
 
 
+/** Update all the particles based on Newtonian dynamics */
 void update_universe(std::vector<particle> particles, std::vector<std::vector<double>> dist, int time_delta) {
     int num_particles{(int)(particles.size())};
 
@@ -203,3 +214,4 @@ int main() {
 
     return 0;
 }
+

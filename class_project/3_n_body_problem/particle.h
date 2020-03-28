@@ -1,7 +1,8 @@
 #if !defined(PARTICLE_H)
 #define PARTICLE_H
 
-// TODO: This does not actually import math
+#include <math.h>
+
 struct particle {
     double mass{ 100.0 };  // kg
     spatial position;      // km
