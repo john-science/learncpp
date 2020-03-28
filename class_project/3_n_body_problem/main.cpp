@@ -172,7 +172,6 @@ void update_universe(std::vector<particle> particles, std::vector<std::vector<do
 }
 
 
-// TODO: Probably I should be using km, not meters.
 // TODO: Create a class for the Universe
 int main() {
     /* init the array of particless */
@@ -193,7 +192,7 @@ int main() {
         update_universe(particles, dist, dt);
 
         if ((t % (print_t)) == 0) {
-            std::cout << "Day  " << (t / day_to_sec) << ": Earth->Sun = " << particles[0].distance(particles[1]) << " m\n";
+            std::cout << "Day  " << (t / day_to_sec) << ": Earth->Sun = " << particles[0].distance(particles[1]) << " km\n";
         }
 
         t += dt;

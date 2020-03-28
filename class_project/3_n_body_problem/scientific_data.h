@@ -2,12 +2,10 @@
 #if !defined(SCIENTIFIC_DATA_H)
 #define SCIENTIFIC_DATA_H
 
-// TODO: Probably I should be using km, not meters.
-
 /* scientific constants */
 const double pi{ 3.1415926535897932384626 };
-const double G{ 6.6743e-11 };               // m**3 / (kg * s)
-const double c{ 299792458 };                // m / s
+const double G{ 6.6743e-20 };               // km**3 / (kg * s)
+const double c{ 299792.458 };                // km / s
 
 /* basic clock data */
 const int min_to_sec{ 60 };
