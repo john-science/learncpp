@@ -16,7 +16,7 @@ struct spatial {
         return new_s;
     }
 
-    spatial operator-(const spatial a) {
+    spatial operator-(const spatial a) const {  // TODO: JOHN const?
         spatial new_s;
         new_s.x = this->x - a.x;
         new_s.y = this->y - a.y;
@@ -85,4 +85,3 @@ std::ostream& operator<<(std::ostream& os, const spatial& s) {
 
 
 #endif
-
