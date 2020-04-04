@@ -9,8 +9,9 @@
 class universe {
 public:
     // attributes
-    std::vector<particle> particles;
+    double timestamp = 0.0;
     int num_particles = 0;
+    std::vector<particle> particles;
     std::vector<spatial> velocities;
     std::vector<std::vector<double>> dist;
     std::vector<std::vector<spatial>> gforce;

@@ -146,4 +146,7 @@ void universe::update(int time_delta) {
 
     // 4) update all particles with directional velocities
     this->update_particles(time_delta);
+
+    // 5) update the universal timestamp
+    timestamp += time_delta;
 }
