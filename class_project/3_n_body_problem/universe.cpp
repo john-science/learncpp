@@ -14,6 +14,7 @@ universe::universe(std::string file_path) {
     // based on the number of particles, initialize everything else
     num_particles = (int)(particles.size());
     velocities.resize(num_particles);
+    net_gforce.resize(num_particles);
 
     dist.resize(num_particles);
     gforce.resize(num_particles);
@@ -71,7 +72,7 @@ spatial universe::velocity_from_force(spatial force, int time_delta, double mass
 
 
 /** Sum N directional velocities together to get a net velocity */
-void universe::calc_net_velocities(std::vector<spatial> net_gforce, int time_delta) {
+void universe::calc_net_velocities(int time_delta) {
     for (int i=0; i < num_particles; i++) {
         velocities[i] = this->velocity_from_force(net_gforce[i], time_delta, particles[i].mass);
     }
@@ -93,7 +94,7 @@ void universe::update_distances() {
 void universe::update_gravity() {
     for (int i=0; i < num_particles; i++) {
         for (int j=i + 1; j < num_particles; j++) {
-            gforce[i][j] = this->gravitational_force(particles[i], particles[j], dist[i][j]);
+            gforce[i][j] = this->gravitational_force(particles[i], particles[j], dist[i][j]) * -1.0;
             gforce[j][i] = gforce[i][j] * -1.0;
         }
     }
@@ -101,7 +102,7 @@ void universe::update_gravity() {
 
 
 /** Sum all the (directional) gravitational forces on one particle */
-void universe::sum_gravity(std::vector<spatial> net_gforce) {
+void universe::sum_gravity() {
     for (int i = 0; i < num_particles; i++) {
         spatial row;
         for (int j = 0; j < num_particles; j++) {
@@ -138,11 +139,10 @@ void universe::update(int time_delta) {
     this->update_gravity();
 
     // 2) calc 1D array of net directional forces
-    std::vector<spatial> net_gforce(num_particles);
-    this->sum_gravity(net_gforce);
+    this->sum_gravity();
 
     // 3) calc 1D array of net directional velocities
-    this->calc_net_velocities(net_gforce, time_delta);
+    this->calc_net_velocities(time_delta);
 
     // 4) update all particles with directional velocities
     this->update_particles(time_delta);

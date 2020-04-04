@@ -14,15 +14,16 @@ public:
     std::vector<spatial> velocities;
     std::vector<std::vector<double>> dist;
     std::vector<std::vector<spatial>> gforce;
+    std::vector<spatial> net_gforce;
 
     // constructor
     universe(std::string file_path);
 
     // methods
-    void calc_net_velocities(std::vector<spatial> net_gforce, int time_delta);
+    void calc_net_velocities(int time_delta);
     double gravitational_force(double mass1, double mass2, double dist);
     spatial gravitational_force(particle p1, particle p2, double dist);
-    void sum_gravity(std::vector<spatial> net_gforce);
+    void sum_gravity();
     void update_distances();
     void update_gravity();
     void update_particle(particle *p, spatial velocity, int time_delta);
@@ -34,5 +35,6 @@ private:
     // methods
     void read_particle_file(std::string file_path);
 };
+
 
 #endif
