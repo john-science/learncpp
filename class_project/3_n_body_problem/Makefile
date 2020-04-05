@@ -1,4 +1,5 @@
 CPP=g++
+CPPFLAGS=-O3
 RM=rm -f
 
 SRCS=main.cpp universe.cpp newtonian_dynamics.cpp
@@ -10,7 +11,7 @@ nbody: $(OBJS)
 	$(CPP) -o nbody $(OBJS)
 
 %.o: %.cpp
-	$(CPP) -c $<
+	$(CPP) -c $(CPPFLAGS) $<
 
 clean:
 	$(RM) $(OBJS)
