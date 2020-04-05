@@ -4,7 +4,7 @@
  * The example below is the Solar System.
  */
 #include <iostream>
-#include "scientific_data.h"
+#include "physical_data.h"
 #include "universe.h"
 
 

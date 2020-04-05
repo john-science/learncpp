@@ -2,7 +2,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <fstream>
-#include "scientific_data.h"
+#include "physical_data.h"
 #include "universe.h"
 
 
