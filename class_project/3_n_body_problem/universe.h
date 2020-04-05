@@ -19,10 +19,7 @@ public:
     universe(std::string file_path);
 
     // methods
-    double gravitational_force(double mass1, double mass2, double dist);
-    spatial gravitational_force(particle p1, particle p2, double dist);
     void update(int time_delta);
-    spatial velocity_from_force(spatial force, int time_delta, double mass);
 
 private:
     // attributes

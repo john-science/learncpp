@@ -1,6 +1,8 @@
 #if !defined(SPATIAL_H)
 #define SPATIAL_H
 
+#include <iostream>
+
 
 struct spatial {
     double x { 0 };

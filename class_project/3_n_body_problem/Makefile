@@ -1,7 +1,7 @@
 CPP=g++
 RM=rm -f
 
-SRCS=main.cpp universe.cpp
+SRCS=main.cpp universe.cpp newtonian_dynamics.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 all: nbody

@@ -1,8 +1,7 @@
-#include <math.h>
 #include <sstream>
 #include <stdexcept>
 #include <fstream>
-#include "physical_data.h"
+#include "newtonian_dynamics.h"
 #include "universe.h"
 
 
@@ -48,33 +47,10 @@ void universe::read_particle_file(std::string file_path) {
 }
 
 
-/** Calculate the gravitional force (as a directional vector) between two particles */
-spatial universe::gravitational_force(particle p1, particle p2, double dist) {
-    spatial force {p1.direction(p2)};
-    double magnitude{this->gravitational_force(p1.mass, p2.mass, dist)};
-
-    force *= magnitude;
-
-    return force;
-}
-
-
-/** Calculate the magnitude of the graviational force between two particles */
-double universe::gravitational_force(double mass1, double mass2, double dist) {
-    return G * mass1 * mass2 / (dist * dist);
-}
-
-
-/** Using the linearized approximation, calculate the final velocity from a constant force applied over time */
-spatial universe::velocity_from_force(spatial force, int time_delta, double mass) {
-    return force * (time_delta / mass);
-}
-
-
 /** Sum N directional velocities together to get a net velocity */
 void universe::calc_net_velocities(int time_delta) {
     for (int i=0; i < num_particles; i++) {
-        velocities[i] = this->velocity_from_force(net_gforce[i], time_delta, particles[i].mass);
+        velocities[i] = velocity_from_force(net_gforce[i], time_delta, particles[i].mass);
     }
 }
 
@@ -94,7 +70,7 @@ void universe::update_distances() {
 void universe::update_gravity() {
     for (int i=0; i < num_particles; i++) {
         for (int j=i + 1; j < num_particles; j++) {
-            gforce[i][j] = this->gravitational_force(particles[i], particles[j], dist[i][j]) * -1.0;
+            gforce[i][j] = gravitational_force(particles[i], particles[j], dist[i][j]) * -1.0;
             gforce[j][i] = gforce[i][j] * -1.0;
         }
     }
