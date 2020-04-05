@@ -14,6 +14,7 @@ nbody: $(OBJS)
 
 clean:
 	$(RM) $(OBJS)
+	$(RM) nbody
 
 distclean: clean
-	$(RM) nbody
+

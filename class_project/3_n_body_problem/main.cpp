@@ -25,7 +25,7 @@ int main() {
         u.update(dt);
 
         if (((int)(u.timestamp) % (print_t)) == 0) {
-            std::cout << "Day  " << (u.timestamp / day_to_sec) << ": Earth->Sun = " << u.particles[0].distance(u.particles[1]) << " km\n";
+            std::cout << "Day  " << (u.timestamp / day_to_sec) << ": Earth->Sun = " << u.dist[0][1] << " km\n";
         }
     }
 
