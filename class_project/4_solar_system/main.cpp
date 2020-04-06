@@ -10,7 +10,7 @@
 
 int main() {
     /** first, create the universe */
-    universe u("particle_data.txt");
+    universe u("astronomical_bodies.txt");
 
     /* init interation counters */
     int dt{ min_to_sec };
