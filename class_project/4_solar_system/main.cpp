@@ -1,7 +1,5 @@
-/** g++ main.cpp universe.cpp --std=c++17 -o nbody.exe
- *
- * This is the N-body problem in Newtownian physics.
- * The example below is the Solar System.
+/** This is a basic model of the Solar using Newtownian physics.
+ *  The example below is the Solar System.
  */
 #include <iostream>
 #include "physical_data.h"

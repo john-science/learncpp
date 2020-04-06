@@ -5,17 +5,17 @@ RM=rm -f
 SRCS=main.cpp universe.cpp newtonian_dynamics.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
-all: system
+all: ssystem
 
-system: $(OBJS)
-	$(CPP) -o system $(OBJS)
+ssystem: $(OBJS)
+	$(CPP) -o ssystem $(OBJS)
 
 %.o: %.cpp
 	$(CPP) -c $(CPPFLAGS) $<
 
 clean:
 	$(RM) $(OBJS)
-	$(RM) system
+	$(RM) ssystem
 
 distclean: clean
 
