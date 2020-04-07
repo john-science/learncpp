@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "particle.h"
+#include "sphere.h"
 
 
 class universe {
@@ -11,7 +11,7 @@ public:
     // attributes
     double timestamp = 0.0;
     int num_particles = 0;
-    std::vector<particle> particles;
+    std::vector<sphere> particles;
     std::vector<spatial> velocities;
     std::vector<std::vector<double>> dist;
 
@@ -32,7 +32,7 @@ private:
     void sum_gravity();
     void update_distances();
     void update_gravity();
-    void update_particle(particle *p, spatial velocity, int time_delta);
+    void update_particle(sphere *p, spatial velocity, int time_delta);
     void update_particles(double time_delta);
 };
 

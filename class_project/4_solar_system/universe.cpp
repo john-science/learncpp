@@ -34,7 +34,7 @@ void universe::read_particle_file(std::string file_path) {
         if (line[0] == '#' || line.length() < 6) { continue;}
 
         std::stringstream ss(line);
-        particle p;
+        sphere p;
         if (ss >> name >> p.mass >> p.position.x >> p.position.y >> p.position.z
                                  >> p.velocity.x >> p.velocity.y >> p.velocity.z) {
             particles.push_back(p);
@@ -77,7 +77,7 @@ void universe::update_gravity() {
 }
 
 
-/** Sum all the (directional) gravitational forces on one particle */
+/** Sum all the (directional) gravitational forces on one body */
 void universe::sum_gravity() {
     for (int i = 0; i < num_particles; i++) {
         spatial row;
@@ -89,8 +89,8 @@ void universe::sum_gravity() {
 }
 
 
-/** Update the position and velocity of a particle, based on it's velocity over a set time interval */
-void universe::update_particle(particle *p, spatial velocity, int time_delta) {
+/** Update the position and velocity of a sphere, based on it's velocity over a set time interval */
+void universe::update_particle(sphere *p, spatial velocity, int time_delta) {
     // Divide by 3 because this velocity is the END velocity due to a linear gravitational acceleration.
     p->position += p->velocity * time_delta + velocity * (time_delta / 3.0);
 
@@ -106,12 +106,12 @@ void universe::update_particles(double time_delta) {
 }
 
 
-/** Master Method: updates all the particles in system basec on Newtonian dynamics */
+/** Master Method: updates all the bodies in system based on Newtonian dynamics */
 void universe::update(int time_delta) {
-    // 0) calc 2D array of distances between particle pairs
+    // 0) calc 2D array of distances between pairs of bodies
     this->update_distances();
 
-    // 1) calc 2D array of gravitational force between particle pairs
+    // 1) calc 2D array of gravitational force between pairs of bodies
     this->update_gravity();
 
     // 2) calc 1D array of net directional forces
@@ -120,7 +120,7 @@ void universe::update(int time_delta) {
     // 3) calc 1D array of net directional velocities
     this->calc_net_velocities(time_delta);
 
-    // 4) update all particles with directional velocities
+    // 4) update all bodies with directional velocities
     this->update_particles(time_delta);
 
     // 5) update the universal timestamp
