@@ -23,3 +23,7 @@ double gravitational_force(double mass1, double mass2, double dist) {
 spatial velocity_from_force(spatial force, int time_delta, double mass) {
     return force * (time_delta / mass);
 }
+
+
+// TODO: Solar Pressure  https://en.wikipedia.org/wiki/Radiation_pressure#Solar_radiation_pressure
+
