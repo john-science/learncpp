@@ -7,25 +7,25 @@
 
 /** Universe Constructor - This shouldn't take 7 days. */
 universe::universe(std::string file_path) {
-	// parse the input file with info about all the particles
-    read_particle_file(file_path);
+	// parse the input file with info about all the bodies
+    read_astro_bodies_file(file_path);
 
-    // based on the number of particles, initialize everything else
-    num_particles = (int)(particles.size());
-    velocities.resize(num_particles);
-    net_gforce.resize(num_particles);
+    // based on the number of bodies, initialize everything else
+    num_bodies = (int)(bodies.size());
+    velocities.resize(num_bodies);
+    net_gforce.resize(num_bodies);
 
-    dist.resize(num_particles);
-    gforce.resize(num_particles);
-    for (int i=0; i < num_particles; i++) {
-    	dist[i].resize(num_particles);
-    	gforce[i].resize(num_particles);
+    dist.resize(num_bodies);
+    gforce.resize(num_bodies);
+    for (int i=0; i < num_bodies; i++) {
+    	dist[i].resize(num_bodies);
+    	gforce[i].resize(num_bodies);
     }
 }
 
 
-/** build all particles in the system by reading a custom text file */
-void universe::read_particle_file(std::string file_path) {
+/** build all astronomical bodies in the system by reading a custom text file */
+void universe::read_astro_bodies_file(std::string file_path) {
     std::ifstream infile{file_path};
     std::string line;
     std::string name;
@@ -37,40 +37,40 @@ void universe::read_particle_file(std::string file_path) {
         sphere p;
         if (ss >> name >> p.mass >> p.position.x >> p.position.y >> p.position.z
                                  >> p.velocity.x >> p.velocity.y >> p.velocity.z) {
-            particles.push_back(p);
+            bodies.push_back(p);
         }
     }
 
-    if (particles.size() < 2) {
-        throw std::length_error("Two few particles found in the input file.");
+    if (bodies.size() < 2) {
+        throw std::length_error("Two few astronomical bodies found in the input file.");
     }
 }
 
 
 /** Sum N directional velocities together to get a net velocity */
 void universe::calc_net_velocities(int time_delta) {
-    for (int i=0; i < num_particles; i++) {
-        velocities[i] = velocity_from_force(net_gforce[i], time_delta, particles[i].mass);
+    for (int i=0; i < num_bodies; i++) {
+        velocities[i] = velocity_from_force(net_gforce[i], time_delta, bodies[i].mass);
     }
 }
 
 
-/** (Re-)Calculate the Distances between all the particles */
+/** (Re-)Calculate the Distances between all the bodies */
 void universe::update_distances() {
-    for (int i=0; i < num_particles; i++) {
-        for (int j=i + 1; j < num_particles; j++) {
-            dist[i][j] = particles[i].distance(particles[j]);
+    for (int i=0; i < num_bodies; i++) {
+        for (int j=i + 1; j < num_bodies; j++) {
+            dist[i][j] = bodies[i].distance(bodies[j]);
             dist[j][i] = dist[i][j];
         }
     }
 }
 
 
-/** (Re-)Calculate the (directional) gravitational forces between all the pairs of particles */
+/** (Re-)Calculate the (directional) gravitational forces between all the pairs of bodies */
 void universe::update_gravity() {
-    for (int i=0; i < num_particles; i++) {
-        for (int j=i + 1; j < num_particles; j++) {
-            gforce[i][j] = gravitational_force(particles[i], particles[j], dist[i][j]) * -1.0;
+    for (int i=0; i < num_bodies; i++) {
+        for (int j=i + 1; j < num_bodies; j++) {
+            gforce[i][j] = gravitational_force(bodies[i], bodies[j], dist[i][j]) * -1.0;
             gforce[j][i] = gforce[i][j] * -1.0;
         }
     }
@@ -79,9 +79,9 @@ void universe::update_gravity() {
 
 /** Sum all the (directional) gravitational forces on one body */
 void universe::sum_gravity() {
-    for (int i = 0; i < num_particles; i++) {
+    for (int i = 0; i < num_bodies; i++) {
         spatial row;
-        for (int j = 0; j < num_particles; j++) {
+        for (int j = 0; j < num_bodies; j++) {
             row += gforce[i][j];
         }
         net_gforce[i] = row;
@@ -90,7 +90,7 @@ void universe::sum_gravity() {
 
 
 /** Update the position and velocity of a sphere, based on it's velocity over a set time interval */
-void universe::update_particle(sphere *p, spatial velocity, int time_delta) {
+void universe::update_body(sphere *p, spatial velocity, int time_delta) {
     // Divide by 3 because this velocity is the END velocity due to a linear gravitational acceleration.
     p->position += p->velocity * time_delta + velocity * (time_delta / 3.0);
 
@@ -98,10 +98,10 @@ void universe::update_particle(sphere *p, spatial velocity, int time_delta) {
 }
 
 
-/** Update all the particles in the system, given their complete set of velocities */
-void universe::update_particles(double time_delta) {
-    for (int i=0; i < num_particles; i++) {
-        this->update_particle(&particles[i], velocities[i], time_delta);
+/** Update all the bodies in the system, given their complete set of velocities */
+void universe::update_bodies(double time_delta) {
+    for (int i=0; i < num_bodies; i++) {
+        this->update_body(&bodies[i], velocities[i], time_delta);
     }
 }
 
@@ -121,7 +121,7 @@ void universe::update(int time_delta) {
     this->calc_net_velocities(time_delta);
 
     // 4) update all bodies with directional velocities
-    this->update_particles(time_delta);
+    this->update_bodies(time_delta);
 
     // 5) update the universal timestamp
     timestamp += time_delta;

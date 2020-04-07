@@ -16,8 +16,8 @@ int main() {
     int total_t{ year_to_sec };
 
     /** loop through the time period and occassionally print results */
-    std::cout << "\nEarth location: " << u.particles[1].position << "\n";
-    std::cout << "Earth velocity: " << u.particles[1].velocity << "\n\n";
+    std::cout << "\nEarth location: " << u.bodies[1].position << "\n";
+    std::cout << "Earth velocity: " << u.bodies[1].velocity << "\n\n";
 
     while(u.timestamp < total_t) {
         u.update(dt);
@@ -27,8 +27,8 @@ int main() {
         }
     }
 
-    std::cout << "\nEarth location: " << u.particles[1].position << "\n";
-    std::cout << "Earth velocity: " << u.particles[1].velocity << "\n\n";
+    std::cout << "\nEarth location: " << u.bodies[1].position << "\n";
+    std::cout << "Earth velocity: " << u.bodies[1].velocity << "\n\n";
 
     return 0;
 }

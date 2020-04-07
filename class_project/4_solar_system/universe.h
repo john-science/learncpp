@@ -10,8 +10,8 @@ class universe {
 public:
     // attributes
     double timestamp = 0.0;
-    int num_particles = 0;
-    std::vector<sphere> particles;
+    int num_bodies = 0;
+    std::vector<sphere> bodies;
     std::vector<spatial> velocities;
     std::vector<std::vector<double>> dist;
 
@@ -28,12 +28,12 @@ private:
 
     // methods
     void calc_net_velocities(int time_delta);
-    void read_particle_file(std::string file_path);
+    void read_astro_bodies_file(std::string file_path);
     void sum_gravity();
     void update_distances();
     void update_gravity();
-    void update_particle(sphere *p, spatial velocity, int time_delta);
-    void update_particles(double time_delta);
+    void update_body(sphere *p, spatial velocity, int time_delta);
+    void update_bodies(double time_delta);
 };
 
 
