@@ -1,7 +1,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <fstream>
-#include "newtonian_dynamics.h"
+#include "physics.h"
 #include "universe.h"
 
 

@@ -2,7 +2,7 @@ CPP=g++
 CPPFLAGS=-O3
 RM=rm -f
 
-SRCS=main.cpp universe.cpp newtonian_dynamics.cpp
+SRCS=main.cpp universe.cpp physics.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 all: ssystem
