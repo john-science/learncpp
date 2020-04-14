@@ -26,4 +26,6 @@ spatial velocity_from_force(spatial force, int time_delta, double mass) {
 
 
 // TODO: Solar Pressure  https://en.wikipedia.org/wiki/Radiation_pressure#Solar_radiation_pressure
+// https://energy-science.org/bibliotheque/cours/1361469594Chapter%2002%20radiation.pdf
+// https://www.grc.nasa.gov/WWW/K-12/Numbers/Math/Mathematical_Thinking/sunlight_exerts_pressure.htm
 
