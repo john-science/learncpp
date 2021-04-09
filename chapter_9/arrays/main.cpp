@@ -52,7 +52,8 @@ int main()
 
     // find the length of an array
     std::cout << "\n\nUsing standard libraries to find the length of an array\n";
-    std::cout << std::size(prime) << '\n';
+    std::cout << std::size(prime) << '\n';  // C++17 compatible
+    std::cout << sizeof(prime) / sizeof(prime[0]) << '\n';
 
     // TODO: more
 
